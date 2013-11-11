@@ -5,12 +5,15 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.spicenu.qbii.Qbii;
 
 public class SplashScreen implements Screen {
 
 	private SpriteBatch spriteBatch;
-	private Texture splash;
+	private Texture splashTexture;
+	private TextureRegion splashTextureRegion;
 	private Qbii qbii;
 	
 	public SplashScreen(Qbii g) {
@@ -21,7 +24,7 @@ public class SplashScreen implements Screen {
 	public void render(float delta) {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         spriteBatch.begin();
-        spriteBatch.draw(splash, 0, 0);
+        spriteBatch.draw(splashTextureRegion, 0, 0);
         spriteBatch.end();
         
         if(Gdx.input.justTouched())
@@ -37,7 +40,8 @@ public class SplashScreen implements Screen {
 	@Override
 	public void show() {
 		spriteBatch = new SpriteBatch();
-		splash = new Texture(Gdx.files.internal("images/splash.png"));
+		TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("images/textures/textures.pack"));
+		splashTextureRegion = atlas.findRegion("splash");
 	}
 
 	@Override
