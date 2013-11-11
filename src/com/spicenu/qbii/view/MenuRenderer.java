@@ -20,29 +20,39 @@ public class MenuRenderer {
 		stage = new Stage(WIDTH, HEIGHT, false);
 		System.out.println("Width: " + WIDTH + ", Height: " + HEIGHT);
 		skin = new Skin(Gdx.files.internal("data/uiskin.json"));
-		drawTable();
 	}
 	
-	private void drawTable() {
+	private void drawTable(boolean debug) {
 		// create labels in the table
 		Label title = new Label("QBII", skin);
+		Button btnStart = new TextButton("Start Game", skin);
+		Button btnOptions = new TextButton("Options", skin);
 		
 		// create the table actor
 		Table table = new Table();
-		table.debug();
-//		table.row();
-		table.setPosition(WIDTH/2, HEIGHT/2);
-		table.add(title).center();
+		if (debug)
+			table.debug();
+		table.setPosition(0, 0);
+		table.setWidth(WIDTH);
+		table.setHeight(HEIGHT);
+		table.center();
+		table.add(title).padBottom(10);
+		table.row();
+		table.add(btnStart).padBottom(10);
+		table.row();
+		table.add(btnOptions);
 		
 		// add the table to the stage and retrieve its layout
 		table.layout();
 		stage.addActor(table);
 	}
 	
-	public void render() {
+	public void render(boolean debug) {
+		drawTable(debug);
 		stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
 		stage.draw();
-		Table.drawDebug(stage);
+		if (debug)
+			Table.drawDebug(stage);
 	}
 	
 	public void dispose() {
