@@ -11,10 +11,13 @@ import com.spicenu.qbii.Qbii;
 
 public class SplashScreen implements Screen {
 
+	private Qbii qbii;
+	
 	private SpriteBatch spriteBatch;
 	private Texture splashTexture;
 	private TextureRegion splashTextureRegion;
-	private Qbii qbii;
+	
+	private MenuScreen menuScreen;
 	
 	public SplashScreen(Qbii g) {
 		qbii = g;
@@ -28,7 +31,7 @@ public class SplashScreen implements Screen {
         spriteBatch.end();
         
         if(Gdx.input.justTouched())
-            qbii.setScreen(new MenuScreen());
+            qbii.setScreen(new MenuScreen(qbii));
 	}
 
 	@Override
@@ -65,7 +68,7 @@ public class SplashScreen implements Screen {
 	@Override
 	public void dispose() {
 		// TODO Auto-generated method stub
-
+		menuScreen.dispose();
 	}
 
 }
