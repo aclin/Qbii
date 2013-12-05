@@ -6,10 +6,10 @@ import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.ui.Button.ButtonStyle;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -29,8 +29,10 @@ public class MenuScreen implements Screen {
 	Skin skin;
 	SpriteBatch spriteBatch;
 	TextureAtlas atlas;
-	TextureRegion trStartUp, trStartDown;
-	TextureRegion trOptionsUp, trOptionsDown;
+//	TextureRegion trStartUp, trStartDown;
+//	TextureRegion trOptionsUp, trOptionsDown;
+	TextureRegion trBigUp, trBigDown;
+	TextureRegion trSmallUp, trSmallDown;
 	
 	public MenuScreen(Qbii g) {
 		qbii = g;
@@ -41,23 +43,48 @@ public class MenuScreen implements Screen {
 		skin = new Skin(Gdx.files.internal("data/uiskin.json"));
 		
 		atlas = new TextureAtlas(Gdx.files.internal("images/textures/textures.pack"));
-		trStartUp = atlas.findRegion("btnStart-up");
-		trStartDown = atlas.findRegion("btnStart-down");
-		trOptionsUp = atlas.findRegion("btnOptions-up");
-		trOptionsDown = atlas.findRegion("btnOptions-down");
+//		trStartUp = atlas.findRegion("btnStart-up");
+//		trStartDown = atlas.findRegion("btnStart-down");
+//		trOptionsUp = atlas.findRegion("btnOptions-up");
+//		trOptionsDown = atlas.findRegion("btnOptions-down");
+		trBigUp = atlas.findRegion("btnBig-up");
+		trBigDown = atlas.findRegion("btnBig-down");
+		trSmallUp = atlas.findRegion("btnSmall-up");
+		trSmallDown = atlas.findRegion("btnSmall-down");
 	}
 	
 	private void drawTable() {
 		// create labels in the table
 		Label title = new Label("QBII", skin);
-		ImageButtonStyle btnStartStyle = new ImageButtonStyle();
-		ImageButtonStyle btnOptionsStyle = new ImageButtonStyle();
-		btnStartStyle.imageUp = new TextureRegionDrawable(trStartUp);
-		btnStartStyle.imageDown = new TextureRegionDrawable(trStartDown);
-		btnOptionsStyle.imageUp = new TextureRegionDrawable(trOptionsUp);
-		btnOptionsStyle.imageDown = new TextureRegionDrawable(trOptionsDown);
-		Button btnStart = new ImageButton(btnStartStyle);
-		Button btnOptions = new ImageButton(btnOptionsStyle);
+//		ImageButtonStyle btnStartStyle = new ImageButtonStyle();
+//		ImageButtonStyle btnOptionsStyle = new ImageButtonStyle();
+//		btnStartStyle.imageUp = new TextureRegionDrawable(trStartUp);
+//		btnStartStyle.imageDown = new TextureRegionDrawable(trStartDown);
+//		btnOptionsStyle.imageUp = new TextureRegionDrawable(trOptionsUp);
+//		btnOptionsStyle.imageDown = new TextureRegionDrawable(trOptionsDown);
+//		Button btnStart = new ImageButton(btnStartStyle);
+//		Button btnOptions = new ImageButton(btnOptionsStyle);
+		ImageButtonStyle btnBigStyle = new ImageButtonStyle();
+		ImageButtonStyle btnSmallStyle = new ImageButtonStyle();
+		btnBigStyle.imageUp = new TextureRegionDrawable(trBigUp);
+		btnBigStyle.imageDown = new TextureRegionDrawable(trBigDown);
+		btnSmallStyle.imageUp = new TextureRegionDrawable(trSmallUp);
+		btnSmallStyle.imageDown = new TextureRegionDrawable(trSmallDown);
+		
+		Button btnBig = new ImageButton(btnBigStyle);
+		Button btnSmall = new ImageButton(btnSmallStyle);
+		
+		btnBig.addListener(new InputListener() {
+			public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+				Gdx.app.log("QBII", "Touch down BIG button");
+				return true;
+			}
+			
+			public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
+				Gdx.app.log("QBII", "Touch up BIG button");
+				qbii.setScreen(new CrateScreen());
+			}
+		});
 		
 		// create the table actor
 		Table table = new Table();
@@ -69,9 +96,11 @@ public class MenuScreen implements Screen {
 		table.center();
 		table.add(title).padBottom(10);
 		table.row();
-		table.add(btnStart).padBottom(10);
+//		table.add(btnStart).padBottom(10);
+		table.add(btnBig).padBottom(10);
 		table.row();
-		table.add(btnOptions);
+//		table.add(btnOptions);
+		table.add(btnSmall);
 		
 		// add the table to the stage and retrieve its layout
 //		table.layout();
