@@ -69,6 +69,7 @@ public class CrateScreen implements Screen, InputProcessor {
 		Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		
+		joController.update(delta);
 		crateRenderer.render();
 	}
 
@@ -82,6 +83,7 @@ public class CrateScreen implements Screen, InputProcessor {
 	@Override
 	public void show() {
 		crate = new Crate();
+		joController = new JoController(crate);
 		crateRenderer = new CrateRenderer(crate);
 	}
 
@@ -105,6 +107,6 @@ public class CrateScreen implements Screen, InputProcessor {
 
 	@Override
 	public void dispose() {
-		Gdx.input.setInputProcessor(null);
+		
 	}
 }

@@ -10,15 +10,15 @@ public class Jo {
 	
 	private Vector2 position = new Vector2();
 	private Vector2 velocity = new Vector2();
+	private Vector2 acceleration = new Vector2();
 	
 	private Rectangle bounds = new Rectangle();
-	private State state = State.IDLE;
-	private boolean faceDown = true;
+	private State state = State.FALLING;
 	
 	private float stateTime = 0;
 	
 	public enum State {
-		IDLE, WALKING;
+		FALLING, DYING;
 	}
 	
 	public Jo(Vector2 pos) {
@@ -35,5 +35,25 @@ public class Jo {
 	
 	public Vector2 getPosition() {
 		return position;
+	}
+	
+	public Vector2 getVelocity() {
+		return velocity;
+	}
+	
+	public Vector2 getAcceleration() {
+		return acceleration;
+	}
+	
+	public Rectangle getBounds() {
+		return bounds;
+	}
+	
+	public State getState() {
+		return state;
+	}
+	
+	public float getStateTime() {
+		return stateTime;
 	}
 }

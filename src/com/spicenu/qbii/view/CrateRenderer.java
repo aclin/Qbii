@@ -1,13 +1,17 @@
 package com.spicenu.qbii.view;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.math.Rectangle;
 import com.spicenu.qbii.model.Crate;
 import com.spicenu.qbii.model.Jo;
+import com.spicenu.qbii.model.Wall;
 
 public class CrateRenderer {
 	
@@ -23,9 +27,10 @@ public class CrateRenderer {
 	
 	/** Textures **/
 	private TextureRegion trJo;
+	private TextureRegion trWall;
 	
 	private SpriteBatch spriteBatch;
-	private boolean debug = false;
+	private boolean debug = true;
 	
 	private int width;
 	private int height;
@@ -52,16 +57,44 @@ public class CrateRenderer {
 	public void render() {
 		spriteBatch.begin();
 		drawJo();
+		drawWalls();
 		spriteBatch.end();
+		if (debug)
+			drawDebug();
 	}
 	
 	private void loadTextures() {
 		TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("images/textures/textures.pack"));
-		trJo = atlas.findRegion("jo-down");
+		trJo = atlas.findRegion("jo-right");
+		trWall = atlas.findRegion("wall-op");
 	}
 	
 	private void drawJo() {
 		Jo jo = crate.getJo();
 		spriteBatch.draw(trJo, jo.getPosition().x * ppuX, jo.getPosition().y * ppuY, Jo.SIZE * ppuX, Jo.SIZE * ppuY);
+	}
+	
+	private void drawWalls() {
+		Wall wall = crate.getWalls();
+		spriteBatch.draw(trWall, wall.getPosition().x * ppuX, wall.getPosition().y * ppuY, Wall.SIZE * ppuX, Wall.SIZE * ppuY);
+	}
+	
+	private void drawDebug() {
+		debugRenderer.setProjectionMatrix(cam.combined);
+		debugRenderer.begin(ShapeType.Line);
+		
+		// render Jo
+		Jo jo = crate.getJo();
+		Rectangle rect = jo.getBounds();
+		debugRenderer.setColor(new Color(0, 1, 0, 1));
+		debugRenderer.rect(rect.x, rect.y, rect.width, rect.height);
+		
+		// render Wall
+		Wall wall = crate.getWalls();
+		rect = wall.getBounds();
+		debugRenderer.setColor(new Color(1, 0, 0, 1));
+		debugRenderer.rect(rect.x, rect.y, rect.width, rect.height);
+		
+		debugRenderer.end();
 	}
 }
