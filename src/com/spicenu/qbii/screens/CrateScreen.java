@@ -5,6 +5,7 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL10;
 import com.spicenu.qbii.controller.JoController;
+import com.spicenu.qbii.controller.WallController;
 import com.spicenu.qbii.model.Crate;
 import com.spicenu.qbii.view.CrateRenderer;
 
@@ -13,8 +14,57 @@ public class CrateScreen implements Screen, InputProcessor {
 	private Crate crate;
 	private CrateRenderer crateRenderer;
 	private JoController joController;
+	private WallController wallController;
 	
 	private int width, height;
+
+	@Override
+	public void render(float delta) {
+		Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
+		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+		
+		joController.update(delta);
+		wallController.update(delta);
+		crateRenderer.render();
+	}
+
+	@Override
+	public void resize(int width, int height) {
+		crateRenderer.setSize(width, height);
+		this.width = width;
+		this.height = height;
+	}
+
+	@Override
+	public void show() {
+		crate = new Crate();
+		joController = new JoController(crate);
+		wallController = new WallController(crate);
+		crateRenderer = new CrateRenderer(crate);
+		Gdx.input.setInputProcessor(this);
+	}
+
+	@Override
+	public void hide() {
+		Gdx.input.setInputProcessor(null);
+	}
+
+	@Override
+	public void pause() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void resume() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void dispose() {
+		Gdx.input.setInputProcessor(null);
+	}
 	
 	@Override
 	public boolean keyDown(int keycode) {
@@ -42,8 +92,8 @@ public class CrateScreen implements Screen, InputProcessor {
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		// TODO Auto-generated method stub
-		return false;
+		wallController.flipPressed();
+		return true;
 	}
 
 	@Override
@@ -62,51 +112,5 @@ public class CrateScreen implements Screen, InputProcessor {
 	public boolean scrolled(int amount) {
 		// TODO Auto-generated method stub
 		return false;
-	}
-
-	@Override
-	public void render(float delta) {
-		Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
-		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-		
-		joController.update(delta);
-		crateRenderer.render();
-	}
-
-	@Override
-	public void resize(int width, int height) {
-		crateRenderer.setSize(width, height);
-		this.width = width;
-		this.height = height;
-	}
-
-	@Override
-	public void show() {
-		crate = new Crate();
-		joController = new JoController(crate);
-		crateRenderer = new CrateRenderer(crate);
-	}
-
-	@Override
-	public void hide() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void pause() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void resume() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void dispose() {
-		
 	}
 }

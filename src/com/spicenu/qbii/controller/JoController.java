@@ -36,13 +36,13 @@ public class JoController {
 	
 	public void fall(float delta) {
 		// Setting initial vertical acceleration
-		jo.getAcceleration().x = GRAVITY;
+//		jo.getAcceleration().x = GRAVITY;
 		
 		// Convert acceleration to frame time
-		jo.getAcceleration().scl(delta);
+//		jo.getAcceleration().scl(delta);
 		
 		// apply acceleration to change velocity
-		jo.getVelocity().add(jo.getAcceleration().x, 0);
+//		jo.getVelocity().add(jo.getAcceleration().x, 0);
 		
 		// Scale velocity to frame units
 		jo.getVelocity().scl(delta);

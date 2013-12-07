@@ -25,11 +25,30 @@ public class Wall {
         this.bounds.setWidth(SIZE);
 	}
 	
+	public void update(float delta) {
+		
+	}
+	
 	public Vector2 getPosition() {
 		return position;
 	}
 	
 	public Rectangle getBounds() {
 		return bounds;
+	}
+	
+	public Wall.State getState() {
+		return state;
+	}
+	
+	public void setState(State s) {
+		this.state = s;
+	}
+	
+	public void flipState() {
+		if (state == State.OPAQUE)
+			state = State.CLEAR;
+		else
+			state = State.OPAQUE;
 	}
 }

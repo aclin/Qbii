@@ -27,7 +27,7 @@ public class CrateRenderer {
 	
 	/** Textures **/
 	private TextureRegion trJo;
-	private TextureRegion trWall;
+	private TextureRegion trWallOpaque, trWallClear, trWallFrame;
 	
 	private SpriteBatch spriteBatch;
 	private boolean debug = true;
@@ -66,7 +66,8 @@ public class CrateRenderer {
 	private void loadTextures() {
 		TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("images/textures/textures.pack"));
 		trJo = atlas.findRegion("jo-right");
-		trWall = atlas.findRegion("wall-op");
+		trWallOpaque = atlas.findRegion("wall-op");
+		trWallClear = atlas.findRegion("wall-cl");
 	}
 	
 	private void drawJo() {
@@ -76,7 +77,8 @@ public class CrateRenderer {
 	
 	private void drawWalls() {
 		Wall wall = crate.getWalls();
-		spriteBatch.draw(trWall, wall.getPosition().x * ppuX, wall.getPosition().y * ppuY, Wall.SIZE * ppuX, Wall.SIZE * ppuY);
+		trWallFrame = (wall.getState() == Wall.State.OPAQUE) ? trWallOpaque : trWallClear;
+		spriteBatch.draw(trWallFrame, wall.getPosition().x * ppuX, wall.getPosition().y * ppuY, Wall.SIZE * ppuX, Wall.SIZE * ppuY);
 	}
 	
 	private void drawDebug() {

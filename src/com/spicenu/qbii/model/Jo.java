@@ -1,15 +1,16 @@
 package com.spicenu.qbii.model;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 public class Jo {
 	
-	public static final float SPEED = 2f;
+	public static final float SPEED = 4f;
 	public static final float SIZE = 0.5f;
 	
 	private Vector2 position = new Vector2();
-	private Vector2 velocity = new Vector2();
+	private Vector2 velocity = new Vector2(SPEED, 0);
 	private Vector2 acceleration = new Vector2();
 	
 	private Rectangle bounds = new Rectangle();
