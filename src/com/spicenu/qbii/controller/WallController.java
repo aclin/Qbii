@@ -1,6 +1,7 @@
 package com.spicenu.qbii.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.spicenu.qbii.model.Crate;
@@ -13,7 +14,7 @@ public class WallController {
 	}
 	
 	private Crate crate;
-	private Wall walls;
+	private List<Wall> walls;
 	
 	static Map<Keys, Boolean> keys = new HashMap<WallController.Keys, Boolean>();
 	static {
@@ -28,12 +29,15 @@ public class WallController {
 	public void update(float delta) {
 		processInput();
 		
-		walls.update(delta);
+		for (Wall w : walls) {
+			w.update(delta);
+		}
 	}
 	
 	private void processInput() {
 		if (keys.get(Keys.FLIP)) {
-			walls.flipState();
+			for (Wall w : walls)
+				w.flipState();
 		}
 		keys.get(keys.put(Keys.FLIP, false));
 	}

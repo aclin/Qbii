@@ -1,5 +1,7 @@
 package com.spicenu.qbii.view;
 
+import java.util.List;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -76,9 +78,10 @@ public class CrateRenderer {
 	}
 	
 	private void drawWalls() {
-		Wall wall = crate.getWalls();
-		trWallFrame = (wall.getState() == Wall.State.OPAQUE) ? trWallOpaque : trWallClear;
-		spriteBatch.draw(trWallFrame, wall.getPosition().x * ppuX, wall.getPosition().y * ppuY, Wall.SIZE * ppuX, Wall.SIZE * ppuY);
+		for (Wall w : crate.getWalls()) {
+			trWallFrame = (w.getState() == Wall.State.OPAQUE) ? trWallOpaque : trWallClear;
+			spriteBatch.draw(trWallFrame, w.getPosition().x * ppuX, w.getPosition().y * ppuY, Wall.SIZE * ppuX, Wall.SIZE * ppuY);
+		}
 	}
 	
 	private void drawDebug() {
@@ -91,11 +94,12 @@ public class CrateRenderer {
 		debugRenderer.setColor(new Color(0, 1, 0, 1));
 		debugRenderer.rect(rect.x, rect.y, rect.width, rect.height);
 		
-		// render Wall
-		Wall wall = crate.getWalls();
-		rect = wall.getBounds();
-		debugRenderer.setColor(new Color(1, 0, 0, 1));
-		debugRenderer.rect(rect.x, rect.y, rect.width, rect.height);
+		// render Walls
+		for (Wall w : crate.getWalls()) {
+			rect = w.getBounds();
+			debugRenderer.setColor(new Color(1, 0, 0, 1));
+			debugRenderer.rect(rect.x, rect.y, rect.width, rect.height);
+		}
 		
 		debugRenderer.end();
 	}

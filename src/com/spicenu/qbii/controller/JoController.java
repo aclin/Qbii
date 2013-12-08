@@ -65,9 +65,10 @@ public class JoController {
 		joRect.x += jo.getVelocity().x;
 		
 		// Reset Jo's position if he collides with an opaque wall
-		Wall w = crate.getWalls();
-		if (joRect.overlaps(w.getBounds()) && w.getState() == Wall.State.OPAQUE) {
-			jo.resetPosition();
+		for (Wall w : crate.getWalls()) {
+			if (joRect.overlaps(w.getBounds()) && w.getState() == Wall.State.OPAQUE) {
+				jo.resetPosition();
+			}
 		}
 	}
 }
