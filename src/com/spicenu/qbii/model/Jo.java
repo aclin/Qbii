@@ -57,4 +57,8 @@ public class Jo {
 	public float getStateTime() {
 		return stateTime;
 	}
+	
+	public void resetPosition() {
+		this.position.x = 0;
+	}
 }

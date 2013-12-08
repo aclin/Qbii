@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Pool;
 import com.spicenu.qbii.model.Crate;
 import com.spicenu.qbii.model.Jo;
-import com.spicenu.qbii.model.Jo.State;
+import com.spicenu.qbii.model.Wall;
 
 public class JoController {
 	
@@ -47,7 +47,16 @@ public class JoController {
 		// Scale velocity to frame units
 		jo.getVelocity().scl(delta);
 		
-		// To move Jo, we move Jo's bounding rectangle at each frame
+		// Check for possible collision with wall
+		checkCollisionWithWalls();
+		
+		// To move Jo, add current velocity to position
+		jo.getPosition().add(jo.getVelocity());
+		jo.getBounds().x = jo.getPosition().x;
+		jo.getVelocity().scl(1 / delta);
+	}
+	
+	public void checkCollisionWithWalls() {
 		// Obtain the rectangle from the pool instead of instantiating it
 		Rectangle joRect = rectPool.obtain();
 		// set the rectangle to Jo's bounding box
@@ -55,8 +64,10 @@ public class JoController {
 		
 		joRect.x += jo.getVelocity().x;
 		
-		jo.getPosition().add(jo.getVelocity());
-		jo.getBounds().x = jo.getPosition().x;
-		jo.getVelocity().scl(1 / delta);
+		// Reset Jo's position if he collides with an opaque wall
+		Wall w = crate.getWalls();
+		if (joRect.overlaps(w.getBounds()) && w.getState() == Wall.State.OPAQUE) {
+			jo.resetPosition();
+		}
 	}
 }
