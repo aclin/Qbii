@@ -6,7 +6,8 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Jo {
 	
-	public static final float SPEED = 4f;
+	public static final float SPEED = 1.5f;
+	public static final float SPEED_INC = 0.5f;
 	public static final float SIZE = 0.5f;
 	
 	private Vector2 position = new Vector2();
@@ -59,6 +60,6 @@ public class Jo {
 	}
 	
 	public void resetPosition() {
-		this.position.x = 0;
+		this.position.x = -1;
 	}
 }

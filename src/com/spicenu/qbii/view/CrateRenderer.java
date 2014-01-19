@@ -30,6 +30,7 @@ public class CrateRenderer {
 	/** Textures **/
 	private TextureRegion trJo;
 	private TextureRegion trWallOpaque, trWallClear, trWallFrame;
+	private TextureRegion trLevelA;
 	
 	private SpriteBatch spriteBatch;
 	private boolean debug = true;
@@ -58,6 +59,7 @@ public class CrateRenderer {
 	
 	public void render() {
 		spriteBatch.begin();
+		drawLevel();
 		drawJo();
 		drawWalls();
 		spriteBatch.end();
@@ -70,6 +72,11 @@ public class CrateRenderer {
 		trJo = atlas.findRegion("jo-right");
 		trWallOpaque = atlas.findRegion("wall-op");
 		trWallClear = atlas.findRegion("wall-cl");
+		trLevelA = atlas.findRegion("level-a");
+	}
+	
+	private void drawLevel() {
+		spriteBatch.draw(trLevelA, 0, 0);
 	}
 	
 	private void drawJo() {

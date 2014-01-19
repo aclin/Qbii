@@ -29,6 +29,7 @@ public class MenuScreen implements Screen {
 	Skin skin;
 	SpriteBatch spriteBatch;
 	TextureAtlas atlas;
+	TextureRegion titleBGTextureRegion;
 //	TextureRegion trStartUp, trStartDown;
 //	TextureRegion trOptionsUp, trOptionsDown;
 	TextureRegion trBigUp, trBigDown;
@@ -109,8 +110,12 @@ public class MenuScreen implements Screen {
 	
 	@Override
 	public void render(float delta) {
-		Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
+//		Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+		
+		spriteBatch.begin();
+        spriteBatch.draw(titleBGTextureRegion, 0, 0);
+        spriteBatch.end();
 		
 		stage.act(delta);
 		stage.draw();
@@ -126,6 +131,10 @@ public class MenuScreen implements Screen {
 
 	@Override
 	public void show() {
+		spriteBatch = new SpriteBatch();
+		TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("images/textures/textures.pack"));
+		titleBGTextureRegion = atlas.findRegion("title-bg-s");
+		
 		drawTable();
 	}
 

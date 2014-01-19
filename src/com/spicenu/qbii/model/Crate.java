@@ -16,11 +16,11 @@ public class Crate {
 	}
 	
 	private void createDemo() {
-		this.jo = new Jo(new Vector2(0, 3));
-		this.wall = new Wall(new Vector2(8, 2.75f), Wall.State.OPAQUE);
-		walls.add(new Wall(new Vector2(3, 2.75f), Wall.State.OPAQUE));
-		walls.add(new Wall(new Vector2(6, 2.75f), Wall.State.CLEAR));
-		walls.add(new Wall(new Vector2(9, 2.75f), Wall.State.OPAQUE));
+		this.jo = new Jo(new Vector2(-1, 5));
+		this.wall = new Wall(new Vector2(8, 4.75f), Wall.State.OPAQUE);
+		walls.add(new Wall(new Vector2(3, 4.75f), Wall.State.OPAQUE));
+		walls.add(new Wall(new Vector2(6, 4.75f), Wall.State.CLEAR));
+		walls.add(new Wall(new Vector2(9, 4.75f), Wall.State.OPAQUE));
 	}
 	
 	public Jo getJo() {
