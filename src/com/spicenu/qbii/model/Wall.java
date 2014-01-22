@@ -16,13 +16,13 @@ public class Wall {
 		OPAQUE, CLEAR;
 	}
 	
-	public Wall(Vector2 pos, State s) {
+	public Wall(Vector2 pos, float w, float h, State s) {
 		this.position = pos;
 		this.state = s;
 		this.bounds.setX(position.x);
         this.bounds.setY(position.y);
-        this.bounds.setHeight(SIZE);
-        this.bounds.setWidth(SIZE);
+        this.bounds.setHeight(w);
+        this.bounds.setWidth(h);
 	}
 	
 	public void update(float delta) {

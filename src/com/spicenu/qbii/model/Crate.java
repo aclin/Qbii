@@ -41,7 +41,9 @@ public class Crate {
 				case 'W':
 					strs = line.split(" ");
 					walls.add(new Wall(new Vector2(Float.parseFloat(strs[1]), Float.parseFloat(strs[2])),
-										Integer.parseInt(strs[3]) == 0 ? Wall.State.CLEAR : Wall.State.OPAQUE));
+										Float.parseFloat(strs[3]),
+										Float.parseFloat(strs[4]),
+										Integer.parseInt(strs[5]) == 0 ? Wall.State.CLEAR : Wall.State.OPAQUE));
 					break;
 				case 'T':
 					break;
