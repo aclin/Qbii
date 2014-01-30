@@ -8,6 +8,8 @@ public class Wall {
 	public static final float SIZE = 1f;
 	
 	private Vector2 position = new Vector2();
+	private float height;
+	private float width;
 	
 	private Rectangle bounds = new Rectangle();
 	private State state;
@@ -21,8 +23,10 @@ public class Wall {
 		this.state = s;
 		this.bounds.setX(position.x);
         this.bounds.setY(position.y);
-        this.bounds.setHeight(w);
-        this.bounds.setWidth(h);
+        this.bounds.setHeight(h);
+        this.bounds.setWidth(w);
+        this.height = h;
+        this.width = w;
 	}
 	
 	public void update(float delta) {
@@ -35,6 +39,14 @@ public class Wall {
 	
 	public Rectangle getBounds() {
 		return bounds;
+	}
+	
+	public float getHeight() {
+		return height;
+	}
+	
+	public float getWidth() {
+		return width;
 	}
 	
 	public Wall.State getState() {

@@ -2,7 +2,13 @@ package com.spicenu.qbii.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.TextureAtlasLoader;
+import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
+import com.badlogic.gdx.assets.loaders.resolvers.ResolutionFileResolver;
+import com.badlogic.gdx.assets.loaders.resolvers.ResolutionFileResolver.Resolution;
 import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -20,14 +26,17 @@ import com.spicenu.qbii.Qbii;
 
 public class MenuScreen implements Screen {
 	
-	private static final boolean DEBUG = false;
+	private static final boolean DEBUG = true;
 	private static final int WIDTH = Gdx.graphics.getWidth();
 	private static final int HEIGHT = Gdx.graphics.getHeight();
 	private Qbii qbii;
 	
+	private AssetManager manager;
 	Stage stage;
 	Skin skin;
 	SpriteBatch spriteBatch;
+	BitmapFont font;
+	
 	TextureAtlas atlas;
 	TextureRegion titleBGTextureRegion;
 //	TextureRegion trStartUp, trStartDown;
@@ -43,7 +52,19 @@ public class MenuScreen implements Screen {
 		
 		skin = new Skin(Gdx.files.internal("data/uiskin.json"));
 		
-		atlas = new TextureAtlas(Gdx.files.internal("images/textures/textures.pack"));
+		Resolution[] resolutions = {new Resolution(480, 320, "480x320"), new Resolution(960, 640, "960x640")};
+		ResolutionFileResolver resolver = new ResolutionFileResolver(new InternalFileHandleResolver(), resolutions);
+		
+		manager = new AssetManager();
+		manager.setLoader(TextureAtlas.class, new TextureAtlasLoader(resolver));
+		manager.load("atlas/textures.atlas", TextureAtlas.class);
+		manager.finishLoading();
+		Gdx.app.log("MenuScreen", "Constructor");
+		font = new BitmapFont();
+		
+//		atlas = new TextureAtlas(Gdx.files.internal("atlas/textures.atlas"));
+		atlas = manager.get("atlas/textures.atlas", TextureAtlas.class);
+//		titleBGTextureRegion = atlas.findRegion("title-bg");
 //		trStartUp = atlas.findRegion("btnStart-up");
 //		trStartDown = atlas.findRegion("btnStart-down");
 //		trOptionsUp = atlas.findRegion("btnOptions-up");
@@ -113,8 +134,15 @@ public class MenuScreen implements Screen {
 //		Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		
+		if (manager.update()) {
+			Gdx.app.log("AssetManager", "Asset manager finished updating");
+		} else {
+			Gdx.app.log("AssetManager", "Asset manager still updating...");
+		}
+		
 		spriteBatch.begin();
-        spriteBatch.draw(titleBGTextureRegion, 0, 0);
+		spriteBatch.draw(titleBGTextureRegion, 0, 0, WIDTH, HEIGHT);
+		font.draw(spriteBatch, "fps:"+Gdx.graphics.getFramesPerSecond(), 26, 40);
         spriteBatch.end();
 		
 		stage.act(delta);
@@ -132,10 +160,19 @@ public class MenuScreen implements Screen {
 	@Override
 	public void show() {
 		spriteBatch = new SpriteBatch();
-		TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("images/textures/textures.pack"));
-		titleBGTextureRegion = atlas.findRegion("title-bg-s");
+		if (manager.isLoaded("atlas/textures.atlas")) {
+			Gdx.app.log("AssetManager", "textures.atlas is loaded");
+			atlas = manager.get("atlas/textures.atlas", TextureAtlas.class);
+			titleBGTextureRegion = atlas.findRegion("title-bg");
+			
+			drawTable();
+			if (DEBUG)
+				Gdx.app.log("Dimensions", "H:" + HEIGHT + " W:" + WIDTH);
+		} else {
+			Gdx.app.log("AssetManager", "textures.atlas is not loaded");
+		}
+//		TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("atlas/textures.pack"));
 		
-		drawTable();
 	}
 
 	@Override

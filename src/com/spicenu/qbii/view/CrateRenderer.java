@@ -1,10 +1,14 @@
 package com.spicenu.qbii.view;
 
-import java.util.List;
-
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.TextureAtlasLoader;
+import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
+import com.badlogic.gdx.assets.loaders.resolvers.ResolutionFileResolver;
+import com.badlogic.gdx.assets.loaders.resolvers.ResolutionFileResolver.Resolution;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -28,11 +32,15 @@ public class CrateRenderer {
 	ShapeRenderer debugRenderer = new ShapeRenderer();
 	
 	/** Textures **/
+	private AssetManager manager;
+	private TextureAtlas atlas;
 	private TextureRegion trJo;
 	private TextureRegion trWallOpaque, trWallClear, trWallFrame;
 	private TextureRegion trLevelA;
+	private BitmapFont font;
 	
 	private SpriteBatch spriteBatch;
+	private boolean texturesInitialized = false;
 	private boolean debug = true;
 	
 	private int width;
@@ -53,26 +61,54 @@ public class CrateRenderer {
 		this.cam.position.set(CAMERA_WIDTH / 2f, CAMERA_HEIGHT / 2f, 0);	// Set camera position in the middle
 		this.cam.update();
 		
+		font = new BitmapFont();
 		spriteBatch = new SpriteBatch();
 		loadTextures();
 	}
 	
 	public void render() {
+		if (manager.update()) {
+			// All assets loaded so far, don't need to do anything further
+//			atlas = new TextureAtlas(Gdx.files.internal("atlas/textures.atlas"));
+//			trJo = atlas.findRegion("jo-right");
+//			trWallOpaque = atlas.findRegion("wall-op");
+//			trWallClear = atlas.findRegion("wall-cl");
+//			trLevelA = atlas.findRegion("level-a");
+		}
+		
 		spriteBatch.begin();
-		drawLevel();
-		drawJo();
-		drawWalls();
+		if (manager.isLoaded("atlas/textures.atlas") && !texturesInitialized) {
+//			atlas = new TextureAtlas(Gdx.files.internal("atlas/textures.atlas"));
+			atlas = manager.get("atlas/textures.atlas");
+			trJo = atlas.findRegion("jo-right");
+			trWallOpaque = atlas.findRegion("wall-op");
+			trWallClear = atlas.findRegion("wall-cl");
+			trLevelA = atlas.findRegion("level-a");
+			texturesInitialized = true;
+		}
+		if (texturesInitialized) {
+			drawLevel();
+			drawJo();
+			drawWalls();
+		}
+		font.draw(spriteBatch, "fps:"+Gdx.graphics.getFramesPerSecond(), 26, 40);
 		spriteBatch.end();
 		if (debug)
 			drawDebug();
 	}
 	
 	private void loadTextures() {
-		TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("images/textures/textures.pack"));
-		trJo = atlas.findRegion("jo-right");
-		trWallOpaque = atlas.findRegion("wall-op");
-		trWallClear = atlas.findRegion("wall-cl");
-		trLevelA = atlas.findRegion("level-a");
+		manager = new AssetManager();
+		Resolution[] resolutions = {new Resolution(480, 320, "480x320"), new Resolution(960, 640, "960x640")};
+		ResolutionFileResolver resolver = new ResolutionFileResolver(new InternalFileHandleResolver(), resolutions);
+		manager.setLoader(TextureAtlas.class, new TextureAtlasLoader(resolver));
+		manager.load("atlas/textures.atlas", TextureAtlas.class);
+		
+//		TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("atlas/textures.atlas"));
+//		trJo = atlas.findRegion("jo-right");
+//		trWallOpaque = atlas.findRegion("wall-op");
+//		trWallClear = atlas.findRegion("wall-cl");
+//		trLevelA = atlas.findRegion("level-a");
 	}
 	
 	private void drawLevel() {
@@ -87,7 +123,7 @@ public class CrateRenderer {
 	private void drawWalls() {
 		for (Wall w : crate.getWalls()) {
 			trWallFrame = (w.getState() == Wall.State.OPAQUE) ? trWallOpaque : trWallClear;
-			spriteBatch.draw(trWallFrame, w.getPosition().x * ppuX, w.getPosition().y * ppuY, Wall.SIZE * ppuX, Wall.SIZE * ppuY);
+			spriteBatch.draw(trWallFrame, w.getPosition().x * ppuX, w.getPosition().y * ppuY, w.getWidth() * ppuX, w.getHeight() * ppuY);
 		}
 	}
 	
