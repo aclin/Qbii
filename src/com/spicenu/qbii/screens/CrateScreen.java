@@ -7,11 +7,13 @@ import com.badlogic.gdx.graphics.GL10;
 import com.spicenu.qbii.controller.JoController;
 import com.spicenu.qbii.controller.WallController;
 import com.spicenu.qbii.model.Crate;
+import com.spicenu.qbii.model.Jo;
 import com.spicenu.qbii.view.CrateRenderer;
 
 public class CrateScreen implements Screen, InputProcessor {
 	
 	private Crate crate;
+	private Jo jo;
 	private CrateRenderer crateRenderer;
 	private JoController joController;
 	private WallController wallController;
@@ -23,9 +25,17 @@ public class CrateScreen implements Screen, InputProcessor {
 		Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		
+		if (jo.getState() == Jo.State.PASS) {
+			crate.goToNextLevel();
+			crate.clearLevel();
+			crate.loadLevel();
+			jo.resetPosition();
+			jo.setState(Jo.State.FALLING);
+		}
+		
+		crateRenderer.render();
 		joController.update(delta);
 		wallController.update(delta);
-		crateRenderer.render();
 	}
 
 	@Override
@@ -38,6 +48,8 @@ public class CrateScreen implements Screen, InputProcessor {
 	@Override
 	public void show() {
 		crate = new Crate();
+		crate.loadLevel();
+		jo = crate.getJo();
 		joController = new JoController(crate);
 		wallController = new WallController(crate);
 		crateRenderer = new CrateRenderer(crate);

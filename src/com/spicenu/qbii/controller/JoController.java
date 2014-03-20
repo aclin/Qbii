@@ -1,5 +1,6 @@
 package com.spicenu.qbii.controller;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Pool;
 import com.spicenu.qbii.model.Crate;
@@ -52,10 +53,16 @@ public class JoController {
 		
 		// To move Jo, add current velocity to position
 		jo.getPosition().add(jo.getVelocity());
+		
 		jo.getBounds().x = jo.getPosition().x;
+		
+		// Check if Jo as passed the end of the level
+		checkPassLevel();
+				
 		jo.getVelocity().scl(1 / delta);
 	}
 	
+	// Checks if Jo collides with a Wall
 	public void checkCollisionWithWalls() {
 		// Obtain the rectangle from the pool instead of instantiating it
 		Rectangle joRect = rectPool.obtain();
@@ -67,8 +74,20 @@ public class JoController {
 		// Reset Jo's position if he collides with an opaque wall
 		for (Wall w : crate.getWalls()) {
 			if (joRect.overlaps(w.getBounds()) && w.getState() == Wall.State.OPAQUE) {
+				
 				jo.resetPosition();
 			}
+		}
+		
+		// Free this rectangle back to the pool
+		rectPool.free(joRect);
+	}
+	
+	// Checks if Jo has reached the end of a level
+	public void checkPassLevel() {
+		if (jo.getPosition().x >= Crate.WIDTH) {
+			jo.setState(Jo.State.PASS);
+//			jo.resetPosition();
 		}
 	}
 }

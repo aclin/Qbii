@@ -20,16 +20,19 @@ import com.spicenu.qbii.model.Jo;
 import com.spicenu.qbii.model.Wall;
 
 public class CrateRenderer {
-	
-	private static final float CAMERA_WIDTH = 10f;
-	private static final float CAMERA_HEIGHT = 7f;
+
+	private static final int WIDTH = Gdx.graphics.getWidth();
+	private static final int HEIGHT = Gdx.graphics.getHeight();
+	private static final float CAMERA_WIDTH = 15f;
+	private static final float CAMERA_HEIGHT = 9f;
 	private static final float RUNNING_FRAME_DURATION = 0.06f;
 	
 	private Crate crate;
 	private OrthographicCamera cam;
 	
 	/** for debug rendering **/
-	ShapeRenderer debugRenderer = new ShapeRenderer();
+	private ShapeRenderer debugRenderer = new ShapeRenderer();
+	public static boolean debug = true;
 	
 	/** Textures **/
 	private AssetManager manager;
@@ -41,7 +44,6 @@ public class CrateRenderer {
 	
 	private SpriteBatch spriteBatch;
 	private boolean texturesInitialized = false;
-	private boolean debug = true;
 	
 	private int width;
 	private int height;
@@ -91,7 +93,7 @@ public class CrateRenderer {
 			drawJo();
 			drawWalls();
 		}
-		font.draw(spriteBatch, "fps:"+Gdx.graphics.getFramesPerSecond(), 26, 40);
+		font.draw(spriteBatch, "fps: " + Gdx.graphics.getFramesPerSecond(), 26, 40);
 		spriteBatch.end();
 		if (debug)
 			drawDebug();
@@ -112,12 +114,14 @@ public class CrateRenderer {
 	}
 	
 	private void drawLevel() {
-		spriteBatch.draw(trLevelA, 0, 0);
+		spriteBatch.draw(trLevelA, 0, 0, WIDTH, HEIGHT);
 	}
 	
 	private void drawJo() {
 		Jo jo = crate.getJo();
 		spriteBatch.draw(trJo, jo.getPosition().x * ppuX, jo.getPosition().y * ppuY, Jo.SIZE * ppuX, Jo.SIZE * ppuY);
+		font.draw(spriteBatch, "Jo x: " + jo.getPosition().x, 26, 55);
+		font.draw(spriteBatch, "Jo y: " + jo.getPosition().y, 26, 70);
 	}
 	
 	private void drawWalls() {

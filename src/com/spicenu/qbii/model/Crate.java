@@ -11,27 +11,35 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Crate {
 	
+	public static final float WIDTH = 15f;
+	public static final float HEIGHT = 9f;
+	
+	/** World Information **/
+	public static int level;
+	public static State state;
+	
 	private Jo jo;
 	private Wall wall;
 	private List<Wall> walls = new ArrayList<Wall>();
 	
+	public enum State {
+		PLAYING, TRANSITION, PAUSE, END;
+	}
+	
 	public Crate() {
-		createDemo();
-		loadLevel();
+		state = State.PLAYING; 
+		level = 1;
+		initializeJo();
 	}
 	
-	private void createDemo() {
+	public void initializeJo() {
 		this.jo = new Jo(new Vector2(-1, 5));
-//		this.wall = new Wall(new Vector2(8, 4.75f), Wall.State.OPAQUE);
-//		walls.add(new Wall(new Vector2(3, 4.75f), Wall.State.OPAQUE));
-//		walls.add(new Wall(new Vector2(6, 4.75f), Wall.State.CLEAR));
-//		walls.add(new Wall(new Vector2(9, 4.75f), Wall.State.OPAQUE));
 	}
 	
-	private void loadLevel() {
+	public void loadLevel() {
 		BufferedReader br = null;
 		try {
-			br = new BufferedReader(Gdx.files.internal("levels/lvl1").reader());
+			br = new BufferedReader(Gdx.files.internal("levels/lvl" + Integer.toString(level)).reader());
 			String line;
 			while ((line = br.readLine()) != null) {
 				Gdx.app.log("Crate", line);
@@ -56,11 +64,21 @@ public class Crate {
 		}
 	}
 	
+	public void clearLevel() {
+		walls.clear();
+	}
+	
 	public Jo getJo() {
 		return jo;
 	}
 	
 	public List<Wall> getWalls() {
 		return walls;
+	}
+	
+	public void goToNextLevel() {
+		level++;
+		if (level > 2)
+			level = 1;
 	}
 }

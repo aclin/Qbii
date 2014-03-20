@@ -20,7 +20,7 @@ public class Jo {
 	private float stateTime = 0;
 	
 	public enum State {
-		FALLING, DYING;
+		FALLING, PASS, DYING;
 	}
 	
 	public Jo(Vector2 pos) {
@@ -49,6 +49,10 @@ public class Jo {
 	
 	public Rectangle getBounds() {
 		return bounds;
+	}
+	
+	public void setState(State s) {
+		this.state = s;
 	}
 	
 	public State getState() {

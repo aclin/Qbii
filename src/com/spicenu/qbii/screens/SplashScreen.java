@@ -99,6 +99,10 @@ public class SplashScreen implements Screen {
 	public void dispose() {
 		// TODO Auto-generated method stub
 		menuScreen.dispose();
+		manager.dispose();
+		spriteBatch.dispose();
+		font.dispose();
+		qbii.dispose();
 	}
 
 }
