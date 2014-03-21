@@ -20,7 +20,7 @@ public class Jo {
 	private float stateTime = 0;
 	
 	public enum State {
-		FALLING, PASS, DYING;
+		FALLING, PASS, DEAD;
 	}
 	
 	public Jo(Vector2 pos) {

@@ -31,6 +31,10 @@ public class CrateScreen implements Screen, InputProcessor {
 			crate.loadLevel();
 			jo.resetPosition();
 			jo.setState(Jo.State.FALLING);
+		} else if (jo.getState() == Jo.State.DEAD) {
+			crate.resetLevel();
+			jo.resetPosition();
+			jo.setState(Jo.State.FALLING);
 		}
 		
 		crateRenderer.render();

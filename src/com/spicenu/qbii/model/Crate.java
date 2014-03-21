@@ -33,7 +33,7 @@ public class Crate {
 	}
 	
 	public void initializeJo() {
-		this.jo = new Jo(new Vector2(-1, 5));
+		this.jo = new Jo(new Vector2(-1, 6));
 	}
 	
 	public void loadLevel() {
@@ -68,6 +68,12 @@ public class Crate {
 		walls.clear();
 	}
 	
+	public void resetLevel() {
+		for (Wall w : walls) {
+			w.resetState();
+		}
+	}
+	
 	public Jo getJo() {
 		return jo;
 	}
@@ -78,7 +84,7 @@ public class Crate {
 	
 	public void goToNextLevel() {
 		level++;
-		if (level > 2)
+		if (level > 7)
 			level = 1;
 	}
 }

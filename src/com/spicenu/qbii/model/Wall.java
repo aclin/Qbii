@@ -13,6 +13,7 @@ public class Wall {
 	
 	private Rectangle bounds = new Rectangle();
 	private State state;
+	private State initialState;
 	
 	public enum State {
 		OPAQUE, CLEAR;
@@ -21,6 +22,7 @@ public class Wall {
 	public Wall(Vector2 pos, float w, float h, State s) {
 		this.position = pos;
 		this.state = s;
+		this.initialState = s;
 		this.bounds.setX(position.x);
         this.bounds.setY(position.y);
         this.bounds.setHeight(h);
@@ -55,6 +57,10 @@ public class Wall {
 	
 	public void setState(State s) {
 		this.state = s;
+	}
+	
+	public void resetState() {
+		state = initialState;
 	}
 	
 	public void flipState() {

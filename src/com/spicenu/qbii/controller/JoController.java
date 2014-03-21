@@ -75,7 +75,7 @@ public class JoController {
 		for (Wall w : crate.getWalls()) {
 			if (joRect.overlaps(w.getBounds()) && w.getState() == Wall.State.OPAQUE) {
 				
-				jo.resetPosition();
+				jo.setState(Jo.State.DEAD);
 			}
 		}
 		
