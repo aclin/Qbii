@@ -11,7 +11,7 @@ public class Wall {
 	private float height;
 	private float width;
 	
-	private Rectangle bounds = new Rectangle();
+	private Rectangle bounds;
 	private State state;
 	private State initialState;
 	
@@ -23,10 +23,7 @@ public class Wall {
 		this.position = pos;
 		this.state = s;
 		this.initialState = s;
-		this.bounds.setX(position.x);
-        this.bounds.setY(position.y);
-        this.bounds.setHeight(h);
-        this.bounds.setWidth(w);
+		this.bounds = new Rectangle(pos.x, pos.y, w, h);
         this.height = h;
         this.width = w;
 	}

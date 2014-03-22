@@ -21,6 +21,7 @@ public class Crate {
 	private Jo jo;
 	private Wall wall;
 	private List<Wall> walls = new ArrayList<Wall>();
+	private List<Teleporter> teleporters = new ArrayList<Teleporter>();
 	
 	public enum State {
 		PLAYING, TRANSITION, PAUSE, END;
@@ -28,7 +29,7 @@ public class Crate {
 	
 	public Crate() {
 		state = State.PLAYING; 
-		level = 1;
+		level = 8;
 		initializeJo();
 	}
 	
@@ -54,6 +55,10 @@ public class Crate {
 										Integer.parseInt(strs[5]) == 0 ? Wall.State.CLEAR : Wall.State.OPAQUE));
 					break;
 				case 'T':
+					strs = line.split(" ");
+					teleporters.add(new Teleporter(new Vector2(Float.parseFloat(strs[1]), Float.parseFloat(strs[2])),
+													new Vector2(Float.parseFloat(strs[3]), Float.parseFloat(strs[4])),
+													Integer.parseInt(strs[5]) == 0 ? Teleporter.State.OFF : Teleporter.State.ON));
 					break;
 				case '%':
 					break;
@@ -66,11 +71,15 @@ public class Crate {
 	
 	public void clearLevel() {
 		walls.clear();
+		teleporters.clear();
 	}
 	
 	public void resetLevel() {
 		for (Wall w : walls) {
 			w.resetState();
+		}
+		for (Teleporter t : teleporters) {
+			t.resetState();
 		}
 	}
 	
@@ -82,9 +91,13 @@ public class Crate {
 		return walls;
 	}
 	
+	public List<Teleporter> getTeleporters() {
+		return teleporters;
+	}
+	
 	public void goToNextLevel() {
-		level++;
-		if (level > 7)
-			level = 1;
+//		level++;
+//		if (level > 7)
+//			level = 1;
 	}
 }

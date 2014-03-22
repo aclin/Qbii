@@ -1,10 +1,11 @@
 package com.spicenu.qbii.controller;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Pool;
 import com.spicenu.qbii.model.Crate;
 import com.spicenu.qbii.model.Jo;
+import com.spicenu.qbii.model.Teleporter;
 import com.spicenu.qbii.model.Wall;
 
 public class JoController {
@@ -51,6 +52,9 @@ public class JoController {
 		// Check for possible collision with wall
 		checkCollisionWithWalls();
 		
+		// Check if Jo entered an teleporter
+		checkEnterTeleporter();
+		
 		// To move Jo, add current velocity to position
 		jo.getPosition().add(jo.getVelocity());
 		
@@ -69,6 +73,7 @@ public class JoController {
 		// set the rectangle to Jo's bounding box
 		joRect.set(jo.getBounds().x, jo.getBounds().y, jo.getBounds().width, jo.getBounds().height);
 		
+		// Shift Jo over by 1 unit of velocity
 		joRect.x += jo.getVelocity().x;
 		
 		// Reset Jo's position if he collides with an opaque wall
@@ -80,6 +85,30 @@ public class JoController {
 		}
 		
 		// Free this rectangle back to the pool
+		rectPool.free(joRect);
+	}
+	
+	public void checkEnterTeleporter() {
+		// Obtain a rectangle from pool instead of instantiating
+		Rectangle joRect = rectPool.obtain();
+		// set the rectangle to Jo's bounding box
+		joRect.set(jo.getBounds().x, jo.getBounds().y, jo.getBounds().width, jo.getBounds().height);
+		
+		// Shift Jo over by 1 unit of velocity
+		joRect.x += jo.getVelocity().x;
+		
+		// Move Jo to the position of the teleporter's exit if the teleporter's SWITCH is ON
+		for (Teleporter t : crate.getTeleporters()) {
+			if (t.getState() == Teleporter.State.ON) {
+				if (joRect.overlaps(t.getEntranceBounds())) {
+					Vector2 ev = t.getExitPosition();
+					jo.setPosition(ev);
+					jo.setBounds(ev.x, ev.y);
+				}
+			}
+		}
+		
+		// Free rectangle back to the pool
 		rectPool.free(joRect);
 	}
 	

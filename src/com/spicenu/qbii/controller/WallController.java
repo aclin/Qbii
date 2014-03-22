@@ -43,7 +43,6 @@ public class WallController {
 	}
 	
 	/* Key presses and touches */
-	
 	public void flipPressed() {
 		keys.get(keys.put(Keys.FLIP, true));
 	}

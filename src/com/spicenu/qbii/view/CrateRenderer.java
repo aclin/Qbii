@@ -17,6 +17,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Rectangle;
 import com.spicenu.qbii.model.Crate;
 import com.spicenu.qbii.model.Jo;
+import com.spicenu.qbii.model.Teleporter;
 import com.spicenu.qbii.model.Wall;
 
 public class CrateRenderer {
@@ -39,6 +40,8 @@ public class CrateRenderer {
 	private TextureAtlas atlas;
 	private TextureRegion trJo;
 	private TextureRegion trWallOpaque, trWallClear, trWallFrame;
+	private TextureRegion trTeleporterEntranceOn, trTeleporterEntranceOff, trTeleporterEntranceFrame;
+	private TextureRegion trTeleporterExitOn, trTeleporterExitOff, trTeleporterExitFrame;
 	private TextureRegion trLevelA;
 	private BitmapFont font;
 	
@@ -85,6 +88,10 @@ public class CrateRenderer {
 			trJo = atlas.findRegion("jo-right");
 			trWallOpaque = atlas.findRegion("wall-op");
 			trWallClear = atlas.findRegion("wall-cl");
+			trTeleporterEntranceOn = atlas.findRegion("teleporter-in-on");
+			trTeleporterEntranceOff = atlas.findRegion("teleporter-in-off");
+			trTeleporterExitOn = atlas.findRegion("teleporter-out-on");
+			trTeleporterExitOff = atlas.findRegion("teleporter-out-off");
 			trLevelA = atlas.findRegion("level-a");
 			texturesInitialized = true;
 		}
@@ -92,6 +99,7 @@ public class CrateRenderer {
 			drawLevel();
 			drawJo();
 			drawWalls();
+			drawTeleporters();
 		}
 		font.draw(spriteBatch, "fps: " + Gdx.graphics.getFramesPerSecond(), 26, 40);
 		spriteBatch.end();
@@ -128,6 +136,28 @@ public class CrateRenderer {
 		for (Wall w : crate.getWalls()) {
 			trWallFrame = (w.getState() == Wall.State.OPAQUE) ? trWallOpaque : trWallClear;
 			spriteBatch.draw(trWallFrame, w.getPosition().x * ppuX, w.getPosition().y * ppuY, w.getWidth() * ppuX, w.getHeight() * ppuY);
+		}
+	}
+	
+	private void drawTeleporters() {
+		for (Teleporter t : crate.getTeleporters()) {
+			if (t.getState() == Teleporter.State.ON) {
+				trTeleporterEntranceFrame = trTeleporterEntranceOn;
+				trTeleporterExitFrame = trTeleporterExitOn;
+			} else {
+				trTeleporterEntranceFrame = trTeleporterEntranceOff;
+				trTeleporterExitFrame = trTeleporterExitOff;
+			}
+			spriteBatch.draw(trTeleporterEntranceFrame,
+								t.getEntranceRenderPosition().x * ppuX,
+								t.getEntranceRenderPosition().y * ppuY,
+								Teleporter.RENDER_WIDTH * ppuX,
+								Teleporter.RENDER_HEIGHT * ppuY);
+			spriteBatch.draw(trTeleporterExitFrame,
+								t.getExitRenderPosition().x * ppuX,
+								t.getExitRenderPosition().y * ppuY,
+								Teleporter.RENDER_WIDTH * ppuX,
+								Teleporter.RENDER_HEIGHT * ppuY);
 		}
 	}
 	

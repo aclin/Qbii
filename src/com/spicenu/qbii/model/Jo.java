@@ -10,12 +10,12 @@ public class Jo {
 	public static final float SPEED_INC = 0.5f;
 	public static final float SIZE = 0.5f;
 	
-	private Vector2 position = new Vector2();
+	private Vector2 position, initialPosition;
 	private Vector2 velocity = new Vector2(SPEED, 0);
 	private Vector2 acceleration = new Vector2();
 	
-	private Rectangle bounds = new Rectangle();
-	private State state = State.FALLING;
+	private Rectangle bounds;
+	private State state;
 	
 	private float stateTime = 0;
 	
@@ -24,11 +24,10 @@ public class Jo {
 	}
 	
 	public Jo(Vector2 pos) {
-		this.position = pos;
-		this.bounds.setX(position.x);
-        this.bounds.setY(position.y);
-        this.bounds.setHeight(SIZE);
-        this.bounds.setWidth(SIZE);
+		this.position = new Vector2(pos);
+		this.initialPosition = new Vector2(pos);
+		this.bounds = new Rectangle(pos.x, pos.y, SIZE, SIZE);
+        state = State.FALLING;
 	}
 	
 	public void update(float delta) {
@@ -37,6 +36,14 @@ public class Jo {
 	
 	public Vector2 getPosition() {
 		return position;
+	}
+	
+	public void setPosition(Vector2 newPos) {
+		this.position = newPos;
+	}
+	
+	public void setPosition(float x, float y) {
+		this.position = new Vector2(x, y);
 	}
 	
 	public Vector2 getVelocity() {
@@ -49,6 +56,14 @@ public class Jo {
 	
 	public Rectangle getBounds() {
 		return bounds;
+	}
+	
+	public void setBounds(Rectangle newBounds) {
+		this.bounds = newBounds;
+	}
+	
+	public void setBounds(float x, float y) {
+		this.bounds = new Rectangle(x, y, SIZE, SIZE);
 	}
 	
 	public void setState(State s) {
@@ -64,6 +79,7 @@ public class Jo {
 	}
 	
 	public void resetPosition() {
-		this.position.x = -1;
+		this.position = new Vector2(initialPosition);
+		this.bounds = new Rectangle(initialPosition.x, initialPosition.y, SIZE, SIZE);
 	}
 }

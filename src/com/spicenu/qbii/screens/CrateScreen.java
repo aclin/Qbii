@@ -5,6 +5,7 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL10;
 import com.spicenu.qbii.controller.JoController;
+import com.spicenu.qbii.controller.TeleporterController;
 import com.spicenu.qbii.controller.WallController;
 import com.spicenu.qbii.model.Crate;
 import com.spicenu.qbii.model.Jo;
@@ -17,6 +18,7 @@ public class CrateScreen implements Screen, InputProcessor {
 	private CrateRenderer crateRenderer;
 	private JoController joController;
 	private WallController wallController;
+	private TeleporterController teleporterController;
 	
 	private int width, height;
 
@@ -40,6 +42,7 @@ public class CrateScreen implements Screen, InputProcessor {
 		crateRenderer.render();
 		joController.update(delta);
 		wallController.update(delta);
+		teleporterController.update(delta);
 	}
 
 	@Override
@@ -56,6 +59,7 @@ public class CrateScreen implements Screen, InputProcessor {
 		jo = crate.getJo();
 		joController = new JoController(crate);
 		wallController = new WallController(crate);
+		teleporterController = new TeleporterController(crate);
 		crateRenderer = new CrateRenderer(crate);
 		Gdx.input.setInputProcessor(this);
 	}
@@ -109,6 +113,7 @@ public class CrateScreen implements Screen, InputProcessor {
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
 		wallController.flipPressed();
+		teleporterController.switchPressed();
 		return true;
 	}
 
