@@ -6,9 +6,9 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Jo {
 	
-	public static final float SPEED = 1.5f;
+	public static final float SPEED = 2.5f;
 	public static final float SPEED_INC = 0.5f;
-	public static final float SIZE = 0.5f;
+	public static final float SIZE = 1f;
 	
 	private Vector2 position, initialPosition;
 	private Vector2 velocity = new Vector2(SPEED, 0);
@@ -23,11 +23,15 @@ public class Jo {
 		FALLING, PASS, DEAD;
 	}
 	
+	public Jo() {
+		this.state = State.FALLING;
+	}
+	
 	public Jo(Vector2 pos) {
 		this.position = new Vector2(pos);
 		this.initialPosition = new Vector2(pos);
 		this.bounds = new Rectangle(pos.x, pos.y, SIZE, SIZE);
-        state = State.FALLING;
+        this.state = State.FALLING;
 	}
 	
 	public void update(float delta) {
@@ -44,6 +48,14 @@ public class Jo {
 	
 	public void setPosition(float x, float y) {
 		this.position = new Vector2(x, y);
+	}
+	
+	public void setInitialPosition(Vector2 newPos) {
+		this.initialPosition = newPos;
+	}
+	
+	public void setInitialPosition(float x, float y) {
+		this.initialPosition = new Vector2(x, y);
 	}
 	
 	public Vector2 getVelocity() {

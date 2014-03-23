@@ -29,12 +29,13 @@ public class Crate {
 	
 	public Crate() {
 		state = State.PLAYING; 
-		level = 8;
+		level = 1;
 		initializeJo();
 	}
 	
 	public void initializeJo() {
-		this.jo = new Jo(new Vector2(-1, 6));
+		this.jo = new Jo();
+//		this.jo = new Jo(new Vector2(-1, 6));
 	}
 	
 	public void loadLevel() {
@@ -47,6 +48,12 @@ public class Crate {
 				char key = line.charAt(0);
 				String[] strs;
 				switch (key) {
+				case 'J':
+					strs = line.split(" ");
+					jo.setPosition(Float.parseFloat(strs[1]), Float.parseFloat(strs[2]));
+					jo.setBounds(Float.parseFloat(strs[1]), Float.parseFloat(strs[2]));
+					jo.setInitialPosition(Float.parseFloat(strs[1]), Float.parseFloat(strs[2]));
+					break;
 				case 'W':
 					strs = line.split(" ");
 					walls.add(new Wall(new Vector2(Float.parseFloat(strs[1]), Float.parseFloat(strs[2])),
@@ -96,8 +103,8 @@ public class Crate {
 	}
 	
 	public void goToNextLevel() {
-//		level++;
-//		if (level > 7)
-//			level = 1;
+		level++;
+		if (level > 12)
+			level = 1;
 	}
 }

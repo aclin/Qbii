@@ -16,7 +16,7 @@ public class Wall {
 	private State initialState;
 	
 	public enum State {
-		OPAQUE, CLEAR;
+		OPAQUE, CLEAR, PERSISTENT;
 	}
 	
 	public Wall(Vector2 pos, float w, float h, State s) {
