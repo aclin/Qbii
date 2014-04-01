@@ -61,9 +61,11 @@ public class Wall {
 	}
 	
 	public void flipState() {
-		if (state == State.OPAQUE)
-			state = State.CLEAR;
-		else
-			state = State.OPAQUE;
+		if (state != State.PERSISTENT) {
+			if (state == State.OPAQUE)
+				state = State.CLEAR;
+			else
+				state = State.OPAQUE;
+		}
 	}
 }

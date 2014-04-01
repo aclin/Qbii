@@ -6,8 +6,8 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Jo {
 	
-	public static final float SPEED = 2.5f;
-	public static final float SPEED_INC = 0.5f;
+	public static float SPEED = 3f;
+	public static final float SPEED_INC = 1f;
 	public static final float SIZE = 1f;
 	
 	private Vector2 position, initialPosition;
@@ -58,12 +58,9 @@ public class Jo {
 		this.initialPosition = new Vector2(x, y);
 	}
 	
-	public Vector2 getVelocity() {
-		return velocity;
-	}
-	
-	public Vector2 getAcceleration() {
-		return acceleration;
+	public void resetPosition() {
+		this.position = new Vector2(initialPosition);
+		this.bounds = new Rectangle(initialPosition.x, initialPosition.y, SIZE, SIZE);
 	}
 	
 	public Rectangle getBounds() {
@@ -90,8 +87,19 @@ public class Jo {
 		return stateTime;
 	}
 	
-	public void resetPosition() {
-		this.position = new Vector2(initialPosition);
-		this.bounds = new Rectangle(initialPosition.x, initialPosition.y, SIZE, SIZE);
+	public Vector2 getVelocity() {
+		return velocity;
+	}
+	
+	public Vector2 getAcceleration() {
+		return acceleration;
+	}
+	
+	public void increaseVelocity() {
+		velocity = velocity.add(SPEED_INC, 0f);
+	}
+	
+	public void resetVelocity() {
+		velocity = new Vector2(SPEED, 0);
 	}
 }

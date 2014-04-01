@@ -22,6 +22,8 @@ public class Crate {
 	private Wall wall;
 	private List<Wall> walls = new ArrayList<Wall>();
 	private List<Teleporter> teleporters = new ArrayList<Teleporter>();
+	private List<Popup> popups = new ArrayList<Popup>();
+	private Popup popupSpeedUp;
 	
 	public enum State {
 		PLAYING, TRANSITION, PAUSE, END;
@@ -30,12 +32,12 @@ public class Crate {
 	public Crate() {
 		state = State.PLAYING; 
 		level = 1;
+		popupSpeedUp = new Popup(new Vector2(0, 6));
 		initializeJo();
 	}
 	
 	public void initializeJo() {
 		this.jo = new Jo();
-//		this.jo = new Jo(new Vector2(-1, 6));
 	}
 	
 	public void loadLevel() {
@@ -48,18 +50,25 @@ public class Crate {
 				char key = line.charAt(0);
 				String[] strs;
 				switch (key) {
-				case 'J':
+				case 'J':	// Jo data
 					strs = line.split(" ");
 					jo.setPosition(Float.parseFloat(strs[1]), Float.parseFloat(strs[2]));
 					jo.setBounds(Float.parseFloat(strs[1]), Float.parseFloat(strs[2]));
 					jo.setInitialPosition(Float.parseFloat(strs[1]), Float.parseFloat(strs[2]));
 					break;
-				case 'W':
+				case 'W':	// Wall data
 					strs = line.split(" ");
+					Wall.State s;
+					if (Integer.parseInt(strs[5]) == 0)
+						s = Wall.State.CLEAR;
+					else if (Integer.parseInt(strs[5]) == 1)
+						s = Wall.State.OPAQUE;
+					else
+						s = Wall.State.PERSISTENT;
 					walls.add(new Wall(new Vector2(Float.parseFloat(strs[1]), Float.parseFloat(strs[2])),
 										Float.parseFloat(strs[3]),
 										Float.parseFloat(strs[4]),
-										Integer.parseInt(strs[5]) == 0 ? Wall.State.CLEAR : Wall.State.OPAQUE));
+										s));
 					break;
 				case 'T':
 					strs = line.split(" ");
@@ -102,9 +111,19 @@ public class Crate {
 		return teleporters;
 	}
 	
+	public Popup getSpeedUpPopup() {
+		return popupSpeedUp;
+	}
+	
 	public void goToNextLevel() {
 		level++;
-		if (level > 12)
+		if (level == 10) {
+			jo.increaseVelocity();
+			popupSpeedUp.setState(Popup.State.RUNNING);
+		}
+		if (level > 13) {
 			level = 1;
+			jo.resetVelocity();
+		}
 	}
 }

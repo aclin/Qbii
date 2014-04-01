@@ -8,6 +8,7 @@ import com.badlogic.gdx.assets.loaders.resolvers.ResolutionFileResolver;
 import com.badlogic.gdx.assets.loaders.resolvers.ResolutionFileResolver.Resolution;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -17,6 +18,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Rectangle;
 import com.spicenu.qbii.model.Crate;
 import com.spicenu.qbii.model.Jo;
+import com.spicenu.qbii.model.Popup;
 import com.spicenu.qbii.model.Teleporter;
 import com.spicenu.qbii.model.Wall;
 
@@ -26,7 +28,7 @@ public class CrateRenderer {
 	private static final int HEIGHT = Gdx.graphics.getHeight();
 	private static final float CAMERA_WIDTH = 15f;
 	private static final float CAMERA_HEIGHT = 9f;
-	private static final float RUNNING_FRAME_DURATION = 0.06f;
+	private static final float SPEEDUP_FRAME_DURATION = 0.06f;
 	
 	private Crate crate;
 	private OrthographicCamera cam;
@@ -39,12 +41,17 @@ public class CrateRenderer {
 	private AssetManager manager;
 	private TextureAtlas atlas;
 	private TextureRegion trJo;
-	private TextureRegion trWallOpaque, trWallClear, trWallFrame;
+	private TextureRegion trWallOpaque, trWallClear, trWallPers, trWallFrame;
 	private TextureRegion trTeleporterEntranceOn, trTeleporterEntranceOff, trTeleporterEntranceFrame;
 	private TextureRegion trTeleporterExitOn, trTeleporterExitOff, trTeleporterExitFrame;
+	private TextureRegion trPopupFrame;
 	private TextureRegion trLevelA;
 	private BitmapFont font;
 	
+	/** Animations **/
+	private Animation animSpeedUp;
+	
+	private float stateTime;
 	private SpriteBatch spriteBatch;
 	private boolean texturesInitialized = false;
 	
@@ -68,43 +75,48 @@ public class CrateRenderer {
 		
 		font = new BitmapFont();
 		spriteBatch = new SpriteBatch();
+		stateTime = 0f;
 		loadTextures();
 	}
 	
 	public void render() {
 		if (manager.update()) {
-			// All assets loaded so far, don't need to do anything further
-//			atlas = new TextureAtlas(Gdx.files.internal("atlas/textures.atlas"));
-//			trJo = atlas.findRegion("jo-right");
-//			trWallOpaque = atlas.findRegion("wall-op");
-//			trWallClear = atlas.findRegion("wall-cl");
-//			trLevelA = atlas.findRegion("level-a");
+			// All assets are loaded, we can use them now
+			spriteBatch.begin();
+			if (!texturesInitialized) { 
+				atlas = manager.get("atlas/textures.atlas");
+				trJo = atlas.findRegion("jo-right");
+				trWallOpaque = atlas.findRegion("wall-op");
+				trWallClear = atlas.findRegion("wall-cl");
+				trWallPers = atlas.findRegion("wall-per");
+				trTeleporterEntranceOn = atlas.findRegion("teleporter-in-on");
+				trTeleporterEntranceOff = atlas.findRegion("teleporter-in-off");
+				trTeleporterExitOn = atlas.findRegion("teleporter-out-on");
+				trTeleporterExitOff = atlas.findRegion("teleporter-out-off");
+				trLevelA = atlas.findRegion("level-a");
+				
+				TextureRegion[] speedUpFrames = new TextureRegion[15];
+				for (int i = 0; i < 15; i++) {
+					speedUpFrames[i] = atlas.findRegion("speedup-" + (i + 1));
+				}
+				animSpeedUp = new Animation(SPEEDUP_FRAME_DURATION, speedUpFrames);
+				
+				texturesInitialized = true;
+			}
+			
+			if (texturesInitialized) {
+				drawLevel();
+				drawJo();
+				drawWalls();
+				drawTeleporters();
+				drawPopups();
+			}
+			
+			font.draw(spriteBatch, "fps: " + Gdx.graphics.getFramesPerSecond(), 26, 40);
+			spriteBatch.end();
+			if (debug)
+				drawDebug();
 		}
-		
-		spriteBatch.begin();
-		if (manager.isLoaded("atlas/textures.atlas") && !texturesInitialized) {
-//			atlas = new TextureAtlas(Gdx.files.internal("atlas/textures.atlas"));
-			atlas = manager.get("atlas/textures.atlas");
-			trJo = atlas.findRegion("jo-right");
-			trWallOpaque = atlas.findRegion("wall-op");
-			trWallClear = atlas.findRegion("wall-cl");
-			trTeleporterEntranceOn = atlas.findRegion("teleporter-in-on");
-			trTeleporterEntranceOff = atlas.findRegion("teleporter-in-off");
-			trTeleporterExitOn = atlas.findRegion("teleporter-out-on");
-			trTeleporterExitOff = atlas.findRegion("teleporter-out-off");
-			trLevelA = atlas.findRegion("level-a");
-			texturesInitialized = true;
-		}
-		if (texturesInitialized) {
-			drawLevel();
-			drawJo();
-			drawWalls();
-			drawTeleporters();
-		}
-		font.draw(spriteBatch, "fps: " + Gdx.graphics.getFramesPerSecond(), 26, 40);
-		spriteBatch.end();
-		if (debug)
-			drawDebug();
 	}
 	
 	private void loadTextures() {
@@ -134,7 +146,17 @@ public class CrateRenderer {
 	
 	private void drawWalls() {
 		for (Wall w : crate.getWalls()) {
-			trWallFrame = (w.getState() == Wall.State.OPAQUE) ? trWallOpaque : trWallClear;
+			switch (w.getState()) {
+			case OPAQUE:
+				trWallFrame = trWallOpaque;
+				break;
+			case CLEAR:
+				trWallFrame = trWallClear;
+				break;
+			case PERSISTENT:
+				trWallFrame = trWallPers;
+				break;
+			}
 			spriteBatch.draw(trWallFrame, w.getPosition().x * ppuX, w.getPosition().y * ppuY, w.getWidth() * ppuX, w.getHeight() * ppuY);
 		}
 	}
@@ -158,6 +180,19 @@ public class CrateRenderer {
 								t.getExitRenderPosition().y * ppuY,
 								Teleporter.RENDER_WIDTH * ppuX,
 								Teleporter.RENDER_HEIGHT * ppuY);
+		}
+	}
+	
+	private void drawPopups() {
+		Popup p = crate.getSpeedUpPopup();
+		if (p.getState() == Popup.State.RUNNING) {
+			stateTime += Gdx.graphics.getDeltaTime();
+			trPopupFrame = animSpeedUp.getKeyFrame(stateTime, true);
+			spriteBatch.draw(trPopupFrame, p.getPosition().x * ppuX, p.getPosition().y * ppuY);
+			if (stateTime > 1) {
+				p.setState(Popup.State.IDLE);
+				stateTime = 0f;
+			}
 		}
 	}
 	

@@ -78,7 +78,7 @@ public class JoController {
 		joRect.set(jo.getBounds().x, jo.getBounds().y, jo.getBounds().width, jo.getBounds().height);
 		
 		// Shift Jo over by 1 unit of velocity
-		joRect.x += jo.getVelocity().x;
+//		joRect.x += jo.getVelocity().x;
 		
 		// Reset Jo's position if he collides with an opaque wall
 		for (Wall w : crate.getWalls()) {
@@ -101,7 +101,7 @@ public class JoController {
 		joRect.set(jo.getBounds().x, jo.getBounds().y, jo.getBounds().width, jo.getBounds().height);
 		
 		// Shift Jo over by 1 unit of velocity
-		joRect.x += jo.getVelocity().x;
+//		joRect.x += jo.getVelocity().x;
 		
 		// Move Jo to the position of the teleporter's exit if the teleporter's SWITCH is ON
 		for (Teleporter t : crate.getTeleporters()) {
