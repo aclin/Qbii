@@ -35,7 +35,7 @@ public class Teleporter {
 	}
 	
 	public void setEntrancePosition(Vector2 pos) {
-		this.entrance.position = pos;
+		this.entrance.position = new Vector2(pos);
 		this.entrance.renderPosition = new Vector2(pos.x - RENDER_OFFSET_X, pos.y - RENDER_OFFSET_Y);
 	}
 	
@@ -48,7 +48,7 @@ public class Teleporter {
 	}
 	
 	public void setExitPosition(Vector2 pos) {
-		this.exit.position = pos;
+		this.exit.position = new Vector2(pos);
 		this.exit.renderPosition = new Vector2(pos.x - RENDER_OFFSET_X, pos.y - RENDER_OFFSET_Y);
 	}
 	
@@ -86,7 +86,7 @@ public class Teleporter {
 		Rectangle bounds;
 		
 		Entrance(Vector2 pos) {
-			this.position = pos;
+			this.position = new Vector2(pos);
 			this.renderPosition = new Vector2(pos.x - RENDER_OFFSET_X, pos.y - RENDER_OFFSET_Y);
 			this.bounds = new Rectangle(pos.x, pos.y, WIDTH, HEIGHT);
 		}
@@ -99,7 +99,7 @@ public class Teleporter {
 		Rectangle bounds;
 		
 		Exit(Vector2 pos) {
-			this.position = pos;
+			this.position = new Vector2(pos);
 			this.renderPosition = new Vector2(pos.x - RENDER_OFFSET_X, pos.y - RENDER_OFFSET_Y);
 			this.bounds = new Rectangle(pos.x, pos.y, WIDTH, HEIGHT);
 		}

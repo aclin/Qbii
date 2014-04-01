@@ -52,17 +52,21 @@ public class JoController {
 		// Check for possible collision with wall
 		checkCollisionWithWalls();
 		
-		// Check if Jo entered an teleporter
-		checkEnterTeleporter();
+		// Make sure Jo is NOT dead before continuing with other checks
+		if (jo.getState() == Jo.State.FALLING) {
+			// Check if Jo entered an teleporter
+			checkEnterTeleporter();
+			
+			// To move Jo, add current velocity to position
+			jo.getPosition().add(jo.getVelocity());
+			
+			jo.getBounds().x = jo.getPosition().x;
+			
+			// Check if Jo as passed the end of the level
+			checkPassLevel();
+		}
 		
-		// To move Jo, add current velocity to position
-		jo.getPosition().add(jo.getVelocity());
-		
-		jo.getBounds().x = jo.getPosition().x;
-		
-		// Check if Jo as passed the end of the level
-		checkPassLevel();
-				
+		// Always rescale the velocity
 		jo.getVelocity().scl(1 / delta);
 	}
 	
@@ -81,6 +85,7 @@ public class JoController {
 			if (joRect.overlaps(w.getBounds())) {
 				if (w.getState() == Wall.State.OPAQUE || w.getState() == Wall.State.PERSISTENT) {
 					jo.setState(Jo.State.DEAD);
+					break;
 				}
 			}
 		}
@@ -105,6 +110,7 @@ public class JoController {
 					Vector2 ev = t.getExitPosition();
 					jo.setPosition(ev);
 					jo.setBounds(ev.x, ev.y);
+					break;
 				}
 			}
 		}

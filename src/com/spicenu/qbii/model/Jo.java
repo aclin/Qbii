@@ -43,7 +43,7 @@ public class Jo {
 	}
 	
 	public void setPosition(Vector2 newPos) {
-		this.position = newPos;
+		this.position = new Vector2(newPos);
 	}
 	
 	public void setPosition(float x, float y) {
@@ -71,7 +71,7 @@ public class Jo {
 	}
 	
 	public void setBounds(Rectangle newBounds) {
-		this.bounds = newBounds;
+		this.bounds = new Rectangle(newBounds);
 	}
 	
 	public void setBounds(float x, float y) {
