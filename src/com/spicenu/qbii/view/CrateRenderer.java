@@ -16,6 +16,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Rectangle;
+import com.spicenu.qbii.Qbii;
 import com.spicenu.qbii.model.Crate;
 import com.spicenu.qbii.model.Jo;
 import com.spicenu.qbii.model.Popup;
@@ -30,6 +31,7 @@ public class CrateRenderer {
 	private static final float CAMERA_HEIGHT = 9f;
 	private static final float SPEEDUP_FRAME_DURATION = 0.06f;
 	
+	private Qbii qbii;
 	private Crate crate;
 	private OrthographicCamera cam;
 	
@@ -67,14 +69,15 @@ public class CrateRenderer {
 		ppuY = height / CAMERA_HEIGHT;
 	}
 	
-	public CrateRenderer(Crate c) {
-		this.crate = c;
+	public CrateRenderer(Crate c, Qbii g) {
+		qbii = g;
+		crate = c;
 		cam = new OrthographicCamera(CAMERA_WIDTH, CAMERA_HEIGHT);			// Set camera height
-		this.cam.position.set(CAMERA_WIDTH / 2f, CAMERA_HEIGHT / 2f, 0);	// Set camera position in the middle
-		this.cam.update();
+		cam.position.set(CAMERA_WIDTH / 2f, CAMERA_HEIGHT / 2f, 0);	// Set camera position in the middle
+		cam.update();
 		
 		font = new BitmapFont();
-		spriteBatch = new SpriteBatch();
+		spriteBatch = qbii.spriteBatch;
 		stateTime = 0f;
 		loadTextures();
 	}
@@ -125,12 +128,6 @@ public class CrateRenderer {
 		ResolutionFileResolver resolver = new ResolutionFileResolver(new InternalFileHandleResolver(), resolutions);
 		manager.setLoader(TextureAtlas.class, new TextureAtlasLoader(resolver));
 		manager.load("atlas/textures.atlas", TextureAtlas.class);
-		
-//		TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("atlas/textures.atlas"));
-//		trJo = atlas.findRegion("jo-right");
-//		trWallOpaque = atlas.findRegion("wall-op");
-//		trWallClear = atlas.findRegion("wall-cl");
-//		trLevelA = atlas.findRegion("level-a");
 	}
 	
 	private void drawLevel() {

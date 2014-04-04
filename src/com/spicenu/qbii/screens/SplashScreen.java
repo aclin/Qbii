@@ -43,13 +43,14 @@ public class SplashScreen implements Screen {
 		
 		font = new BitmapFont();
 		qbii = g;
+		spriteBatch = qbii.spriteBatch;
 	}
 	
 	@Override
 	public void render(float delta) {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		if (manager.update()) {
-			Gdx.app.log("SplashScreen render()", "Manager updated");
+//			Gdx.app.log("SplashScreen render()", "Manager updated");
 			
 			spriteBatch.begin();
 //	        spriteBatch.draw(splashTextureRegion, 0, 0);
@@ -57,8 +58,10 @@ public class SplashScreen implements Screen {
 	        font.draw(spriteBatch, "fps:"+Gdx.graphics.getFramesPerSecond(), 26, 40);
 	        spriteBatch.end();
 	        
-	        if(Gdx.input.justTouched())
+	        if(Gdx.input.justTouched()) {
 	            qbii.setScreen(new MenuScreen(qbii));
+	            dispose();
+	        }
 		}
 		
         
@@ -72,7 +75,7 @@ public class SplashScreen implements Screen {
 
 	@Override
 	public void show() {
-		spriteBatch = new SpriteBatch();
+//		spriteBatch = new SpriteBatch();
 //		TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("atlas/textures.atlas"));
 //		splashTextureRegion = atlas.findRegion("splash");
 	}
@@ -97,12 +100,11 @@ public class SplashScreen implements Screen {
 
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
-		menuScreen.dispose();
+//		menuScreen.dispose();
 		manager.dispose();
-		spriteBatch.dispose();
+//		spriteBatch.dispose();
 		font.dispose();
-		qbii.dispose();
+//		qbii.dispose();
 	}
 
 }

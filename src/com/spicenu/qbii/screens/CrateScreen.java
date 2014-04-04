@@ -1,9 +1,35 @@
 package com.spicenu.qbii.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.TextureAtlasLoader;
+import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
+import com.badlogic.gdx.assets.loaders.resolvers.ResolutionFileResolver;
+import com.badlogic.gdx.assets.loaders.resolvers.ResolutionFileResolver.Resolution;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Pixmap.Format;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
+import com.spicenu.qbii.Qbii;
 import com.spicenu.qbii.controller.JoController;
 import com.spicenu.qbii.controller.TeleporterController;
 import com.spicenu.qbii.controller.WallController;
@@ -13,6 +39,9 @@ import com.spicenu.qbii.view.CrateRenderer;
 
 public class CrateScreen implements Screen, InputProcessor {
 	
+	private final static boolean DEBUG = true;
+	
+	private Qbii qbii;
 	private Crate crate;
 	private Jo jo;
 	private CrateRenderer crateRenderer;
@@ -20,48 +49,152 @@ public class CrateScreen implements Screen, InputProcessor {
 	private WallController wallController;
 	private TeleporterController teleporterController;
 	
+	/** Assets **/
+	private AssetManager manager;
+	private TextureAtlas atlas;
+	
+	/** HUD **/
+	private Stage inGameHUDStage;
+	private Skin skin;
+	private TextButton btnResume;
+	
 	private int width, height;
-
-	@Override
-	public void render(float delta) {
-		Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
-		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-		
-		if (jo.getState() == Jo.State.PASS) {
-			crate.goToNextLevel();
-			crate.clearLevel();
-			crate.loadLevel();
-//			jo.resetPosition();
-			jo.setState(Jo.State.FALLING);
-		} else if (jo.getState() == Jo.State.DEAD) {
-			crate.resetLevel();
-			jo.resetPosition();
-			jo.setState(Jo.State.FALLING);
-		}
-		
-		crateRenderer.render();
-		joController.update(delta);
-		wallController.update(delta);
-		teleporterController.update(delta);
-	}
-
-	@Override
-	public void resize(int width, int height) {
-		crateRenderer.setSize(width, height);
-		this.width = width;
-		this.height = height;
-	}
-
-	@Override
-	public void show() {
+	
+	public CrateScreen(Qbii g) {
+		qbii = g;
 		crate = new Crate();
 		crate.loadLevel();
 		jo = crate.getJo();
 		joController = new JoController(crate);
 		wallController = new WallController(crate);
 		teleporterController = new TeleporterController(crate);
-		crateRenderer = new CrateRenderer(crate);
-		Gdx.input.setInputProcessor(this);
+		crateRenderer = new CrateRenderer(crate, qbii);
+		
+		Resolution[] resolutions = {new Resolution(480, 320, "480x320"), new Resolution(960, 640, "960x640")};
+		ResolutionFileResolver resolver = new ResolutionFileResolver(new InternalFileHandleResolver(), resolutions);
+		manager = new AssetManager();
+		manager.setLoader(TextureAtlas.class, new TextureAtlasLoader(resolver));
+		manager.load("atlas/HUD-textures.atlas", TextureAtlas.class);
+		manager.finishLoading();
+		
+		atlas = manager.get("atlas/HUD-textures.atlas", TextureAtlas.class);
+		inGameHUDStage = new Stage();
+		createHUD();
+		
+		InputMultiplexer mux = new InputMultiplexer();
+		mux.addProcessor(inGameHUDStage);
+		mux.addProcessor(this);
+		Gdx.input.setInputProcessor(mux);
+	}
+	
+	private void createHUD() {
+		skin = new Skin();
+		
+		Pixmap pixmap = new Pixmap(1, 1, Format.RGBA8888);
+		pixmap.setColor(Color.WHITE);
+		pixmap.fill();
+		skin.add("white", new Texture(pixmap));
+		
+		skin.add("default", new BitmapFont());
+		
+		TextButtonStyle textButtonStyle = new TextButtonStyle();
+		textButtonStyle.up = skin.newDrawable("white", Color.DARK_GRAY);
+		textButtonStyle.down = skin.newDrawable("white", Color.DARK_GRAY);
+		textButtonStyle.checked = skin.newDrawable("white", Color.BLUE);
+		textButtonStyle.over = skin.newDrawable("white", Color.LIGHT_GRAY);
+		textButtonStyle.font = skin.getFont("default");
+		skin.add("default", textButtonStyle);
+		
+		btnResume = new TextButton("Resume game", skin);
+		btnResume.setVisible(false);
+		
+		btnResume.addListener(new ChangeListener() {
+			public void changed (ChangeEvent event, Actor actor) {
+				System.out.println("Clicked! Is checked: " + btnResume.isChecked());
+				btnResume.setVisible(false);
+				crate.setState(Crate.State.PLAYING);
+			}
+		});
+		
+		TextureRegion trBtnPauseUp = atlas.findRegion("pause-up");
+		TextureRegion trBtnPauseDown = atlas.findRegion("pause-down");
+		
+		Table table = new Table();
+		if (DEBUG)
+			table.debug();
+		table.setFillParent(true);
+		
+		Button.ButtonStyle btnPauseStyle = new Button.ButtonStyle();
+		btnPauseStyle.up = new TextureRegionDrawable(trBtnPauseUp);
+		btnPauseStyle.down = new TextureRegionDrawable(trBtnPauseDown);
+		Button btnPause = new Button(btnPauseStyle);
+		
+		btnPause.addListener(new InputListener() {
+			public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+				Gdx.app.log("QBII", "Touch down PAUSE button");
+				return true;
+			}
+			
+			public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
+				Gdx.app.log("QBII", "Touch up PAUSE button");
+				crate.setState(Crate.State.PAUSE);
+				btnResume.setVisible(true);
+			}
+		});
+		
+		table.add().expandX();
+		table.add(btnPause).width(btnPause.getWidth());
+		table.row();
+		table.add(btnResume).expand();
+		inGameHUDStage.addActor(table);
+	}
+	
+	@Override
+	public void render(float delta) {
+		switch (crate.getState()) {
+		case PLAYING:
+//			Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
+			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+			
+			if (jo.getState() == Jo.State.PASS) {
+				crate.goToNextLevel();
+				crate.clearLevel();
+				crate.loadLevel();
+	//			jo.resetPosition();
+				jo.setState(Jo.State.FALLING);
+			} else if (jo.getState() == Jo.State.DEAD) {
+				crate.resetLevel();
+				jo.resetPosition();
+				jo.setState(Jo.State.FALLING);
+			}
+			
+			crateRenderer.render();
+			joController.update(delta);
+			wallController.update(delta);
+			teleporterController.update(delta);
+			break;
+		case PAUSE:
+			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+			crateRenderer.render();
+//			btnResume.setVisible(true);
+			break;
+		}
+		
+		inGameHUDStage.act(delta);
+		inGameHUDStage.draw();
+		if (DEBUG)
+			Table.drawDebug(inGameHUDStage);
+	}
+
+	@Override
+	public void resize(int width, int height) {
+		crateRenderer.setSize(width, height);
+		inGameHUDStage.getViewport().update(width, height, true);
+	}
+
+	@Override
+	public void show() {
+		
 	}
 
 	@Override
@@ -112,9 +245,12 @@ public class CrateScreen implements Screen, InputProcessor {
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		wallController.flipPressed();
-		teleporterController.switchPressed();
-		return true;
+		if (crate.getState() == Crate.State.PLAYING) {
+			wallController.flipPressed();
+			teleporterController.switchPressed();
+			return true;
+		}
+		return false;
 	}
 
 	@Override

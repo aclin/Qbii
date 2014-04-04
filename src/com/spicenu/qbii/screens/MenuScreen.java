@@ -7,7 +7,7 @@ import com.badlogic.gdx.assets.loaders.TextureAtlasLoader;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.assets.loaders.resolvers.ResolutionFileResolver;
 import com.badlogic.gdx.assets.loaders.resolvers.ResolutionFileResolver.Resolution;
-import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -47,13 +47,15 @@ public class MenuScreen implements Screen {
 	public MenuScreen(Qbii g) {
 		qbii = g;
 		
-		stage = new Stage(WIDTH, HEIGHT, false);
+		stage = new Stage();
 		Gdx.input.setInputProcessor(stage);
 		
 		skin = new Skin(Gdx.files.internal("data/uiskin.json"));
 		
 		Resolution[] resolutions = {new Resolution(480, 320, "480x320"), new Resolution(960, 640, "960x640")};
 		ResolutionFileResolver resolver = new ResolutionFileResolver(new InternalFileHandleResolver(), resolutions);
+		
+		spriteBatch = qbii.spriteBatch;
 		
 		manager = new AssetManager();
 		manager.setLoader(TextureAtlas.class, new TextureAtlasLoader(resolver));
@@ -104,7 +106,8 @@ public class MenuScreen implements Screen {
 			
 			public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
 				Gdx.app.log("QBII", "Touch up BIG button");
-				qbii.setScreen(new CrateScreen());
+				qbii.setScreen(new CrateScreen(qbii));
+				dispose();
 			}
 		});
 		
@@ -112,10 +115,11 @@ public class MenuScreen implements Screen {
 		Table table = new Table();
 		if (DEBUG)
 			table.debug();
-		table.setPosition(0, 0);
-		table.setWidth(WIDTH);
-		table.setHeight(HEIGHT);
-		table.center();
+//		table.setPosition(0, 0);
+//		table.setWidth(WIDTH);
+//		table.setHeight(HEIGHT);
+//		table.center();
+		table.setFillParent(true);
 		table.add(title).padBottom(10);
 		table.row();
 //		table.add(btnStart).padBottom(10);
@@ -132,10 +136,10 @@ public class MenuScreen implements Screen {
 	@Override
 	public void render(float delta) {
 //		Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
-		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
 		if (manager.update()) {
-			Gdx.app.log("AssetManager", "Asset manager finished updating");
+//			Gdx.app.log("AssetManager", "Asset manager finished updating");
 		} else {
 			Gdx.app.log("AssetManager", "Asset manager still updating...");
 		}
@@ -153,13 +157,11 @@ public class MenuScreen implements Screen {
 
 	@Override
 	public void resize(int width, int height) {
-		// TODO Auto-generated method stub
-
+		stage.getViewport().update(width, height, true);
 	}
 
 	@Override
 	public void show() {
-		spriteBatch = new SpriteBatch();
 		if (manager.isLoaded("atlas/textures.atlas")) {
 			Gdx.app.log("AssetManager", "textures.atlas is loaded");
 			atlas = manager.get("atlas/textures.atlas", TextureAtlas.class);

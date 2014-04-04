@@ -126,4 +126,12 @@ public class Crate {
 			jo.resetVelocity();
 		}
 	}
+	
+	public void setState(State s) {
+		state = s;
+	}
+	
+	public State getState() {
+		return state;
+	}
 }
