@@ -12,8 +12,8 @@ import com.badlogic.gdx.assets.loaders.resolvers.ResolutionFileResolver.Resoluti
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Pixmap.Format;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -22,13 +22,14 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Button.ButtonStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.spicenu.qbii.Qbii;
 import com.spicenu.qbii.controller.JoController;
 import com.spicenu.qbii.controller.TeleporterController;
@@ -56,7 +57,6 @@ public class CrateScreen implements Screen, InputProcessor {
 	/** HUD **/
 	private Stage inGameHUDStage;
 	private Skin skin;
-	private TextButton btnResume;
 	
 	private int width, height;
 	
@@ -93,25 +93,45 @@ public class CrateScreen implements Screen, InputProcessor {
 		Pixmap pixmap = new Pixmap(1, 1, Format.RGBA8888);
 		pixmap.setColor(Color.WHITE);
 		pixmap.fill();
+		
 		skin.add("white", new Texture(pixmap));
+		
+		TextureRegion imgResume = new TextureRegion(atlas.findRegion("resume"));
+		TextureRegion imgQuit = new TextureRegion(atlas.findRegion("quit"));
+		skin.add("resume", imgResume);
+		skin.add("quit", imgQuit);
 		
 		skin.add("default", new BitmapFont());
 		
-		TextButtonStyle textButtonStyle = new TextButtonStyle();
-		textButtonStyle.up = skin.newDrawable("white", Color.DARK_GRAY);
-		textButtonStyle.down = skin.newDrawable("white", Color.DARK_GRAY);
-		textButtonStyle.checked = skin.newDrawable("white", Color.BLUE);
-		textButtonStyle.over = skin.newDrawable("white", Color.LIGHT_GRAY);
-		textButtonStyle.font = skin.getFont("default");
-		skin.add("default", textButtonStyle);
+		ButtonStyle btnResumeStyle = new ButtonStyle();
+		btnResumeStyle.up = skin.newDrawable("resume");
+		btnResumeStyle.down = skin.newDrawable("resume", Color.LIGHT_GRAY);
+		skin.add("resumeStyle", btnResumeStyle);
 		
-		btnResume = new TextButton("Resume game", skin);
+		ButtonStyle btnQuitStyle = new ButtonStyle();
+		btnQuitStyle.up = skin.newDrawable("quit");
+		btnQuitStyle.down = skin.newDrawable("quit", Color.LIGHT_GRAY);
+		skin.add("quitStyle", btnQuitStyle);
+		
+		final Button btnResume = new Button(skin, "resumeStyle");
+		final Button btnQuit = new Button(skin, "quitStyle");
 		btnResume.setVisible(false);
+		btnQuit.setVisible(false);
 		
 		btnResume.addListener(new ChangeListener() {
 			public void changed (ChangeEvent event, Actor actor) {
 				System.out.println("Clicked! Is checked: " + btnResume.isChecked());
 				btnResume.setVisible(false);
+				btnQuit.setVisible(false);
+				crate.setState(Crate.State.PLAYING);
+			}
+		});
+		
+		btnQuit.addListener(new ChangeListener() {
+			public void changed (ChangeEvent event, Actor actor) {
+				System.out.println("Clicked! Is checked: " + btnQuit.isChecked());
+				btnResume.setVisible(false);
+				btnQuit.setVisible(false);
 				crate.setState(Crate.State.PLAYING);
 			}
 		});
@@ -139,6 +159,7 @@ public class CrateScreen implements Screen, InputProcessor {
 				Gdx.app.log("QBII", "Touch up PAUSE button");
 				crate.setState(Crate.State.PAUSE);
 				btnResume.setVisible(true);
+				btnQuit.setVisible(true);
 			}
 		});
 		
@@ -146,6 +167,8 @@ public class CrateScreen implements Screen, InputProcessor {
 		table.add(btnPause).width(btnPause.getWidth());
 		table.row();
 		table.add(btnResume).expand();
+		table.row();
+		table.add(btnQuit).expand();
 		inGameHUDStage.addActor(table);
 	}
 	
@@ -176,7 +199,6 @@ public class CrateScreen implements Screen, InputProcessor {
 		case PAUSE:
 			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 			crateRenderer.render();
-//			btnResume.setVisible(true);
 			break;
 		}
 		
