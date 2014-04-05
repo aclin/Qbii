@@ -31,7 +31,7 @@ public class Crate {
 	
 	public Crate() {
 		state = State.PLAYING; 
-		level = 1;
+		level = 9;
 		popupSpeedUp = new Popup(new Vector2(0, 6));
 		initializeJo();
 	}
@@ -121,8 +121,8 @@ public class Crate {
 			jo.increaseVelocity();
 			popupSpeedUp.setState(Popup.State.RUNNING);
 		}
-		if (level > 13) {
-			level = 1;
+		if (level > 10) {
+			level = 9;
 			jo.resetVelocity();
 		}
 	}

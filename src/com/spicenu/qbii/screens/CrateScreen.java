@@ -136,18 +136,14 @@ public class CrateScreen implements Screen, InputProcessor {
 			}
 		});
 		
-		TextureRegion trBtnPauseUp = atlas.findRegion("pause-up");
-		TextureRegion trBtnPauseDown = atlas.findRegion("pause-down");
+		TextureRegion trBtnPause = new TextureRegion(atlas.findRegion("pause"));
+		skin.add("pause", trBtnPause);
 		
-		Table table = new Table();
-		if (DEBUG)
-			table.debug();
-		table.setFillParent(true);
-		
-		Button.ButtonStyle btnPauseStyle = new Button.ButtonStyle();
-		btnPauseStyle.up = new TextureRegionDrawable(trBtnPauseUp);
-		btnPauseStyle.down = new TextureRegionDrawable(trBtnPauseDown);
-		Button btnPause = new Button(btnPauseStyle);
+		ButtonStyle btnPauseStyle = new ButtonStyle();
+		btnPauseStyle.up = skin.newDrawable("pause");
+		btnPauseStyle.down = skin.newDrawable("pause", Color.LIGHT_GRAY);
+		skin.add("pauseStyle", btnPauseStyle);
+		Button btnPause = new Button(skin, "pauseStyle");
 		
 		btnPause.addListener(new InputListener() {
 			public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
@@ -162,6 +158,11 @@ public class CrateScreen implements Screen, InputProcessor {
 				btnQuit.setVisible(true);
 			}
 		});
+		
+		Table table = new Table();
+		if (DEBUG)
+			table.debug();
+		table.setFillParent(true);
 		
 		table.add().expandX();
 		table.add(btnPause).width(btnPause.getWidth());
@@ -239,6 +240,10 @@ public class CrateScreen implements Screen, InputProcessor {
 	@Override
 	public void dispose() {
 		Gdx.input.setInputProcessor(null);
+		inGameHUDStage.dispose();
+		skin.dispose();
+		manager.dispose();
+		
 	}
 	
 	@Override
