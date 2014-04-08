@@ -31,7 +31,7 @@ public class Crate {
 	
 	public Crate() {
 		state = State.PLAYING; 
-		level = 9;
+		level = 1;
 		popupSpeedUp = new Popup(new Vector2(0, 6));
 		initializeJo();
 	}
@@ -58,23 +58,23 @@ public class Crate {
 					break;
 				case 'W':	// Wall data
 					strs = line.split(" ");
-					Wall.State s;
-					if (Integer.parseInt(strs[5]) == 0)
-						s = Wall.State.CLEAR;
-					else if (Integer.parseInt(strs[5]) == 1)
-						s = Wall.State.OPAQUE;
-					else
-						s = Wall.State.PERSISTENT;
 					walls.add(new Wall(new Vector2(Float.parseFloat(strs[1]), Float.parseFloat(strs[2])),
 										Float.parseFloat(strs[3]),
 										Float.parseFloat(strs[4]),
-										s));
+										Integer.parseInt(strs[5]) == 0 ? Wall.State.CLEAR : Wall.State.OPAQUE));
 					break;
 				case 'T':
 					strs = line.split(" ");
 					teleporters.add(new Teleporter(new Vector2(Float.parseFloat(strs[1]), Float.parseFloat(strs[2])),
 													new Vector2(Float.parseFloat(strs[3]), Float.parseFloat(strs[4])),
 													Integer.parseInt(strs[5]) == 0 ? Teleporter.State.OFF : Teleporter.State.ON));
+					break;
+				case 'P':
+					strs = line.split(" ");
+					walls.add(new Wall(new Vector2(Float.parseFloat(strs[1]), Float.parseFloat(strs[2])),
+										1f,
+										1f,
+										Wall.State.PERSISTENT));
 					break;
 				case '%':
 					break;
@@ -121,8 +121,8 @@ public class Crate {
 			jo.increaseVelocity();
 			popupSpeedUp.setState(Popup.State.RUNNING);
 		}
-		if (level > 10) {
-			level = 9;
+		if (level > 22) {
+			level = 1;
 			jo.resetVelocity();
 		}
 	}
