@@ -41,8 +41,8 @@ public class MenuScreen implements Screen {
 	TextureRegion titleBGTextureRegion;
 //	TextureRegion trStartUp, trStartDown;
 //	TextureRegion trOptionsUp, trOptionsDown;
-	TextureRegion trBigUp, trBigDown;
-	TextureRegion trSmallUp, trSmallDown;
+	TextureRegion trStartUp, trStartDown;
+	TextureRegion trHelpUp, trHelpDown;
 	
 	public MenuScreen(Qbii g) {
 		qbii = g;
@@ -71,10 +71,10 @@ public class MenuScreen implements Screen {
 //		trStartDown = atlas.findRegion("btnStart-down");
 //		trOptionsUp = atlas.findRegion("btnOptions-up");
 //		trOptionsDown = atlas.findRegion("btnOptions-down");
-		trBigUp = atlas.findRegion("btnBig-up");
-		trBigDown = atlas.findRegion("btnBig-down");
-		trSmallUp = atlas.findRegion("btnSmall-up");
-		trSmallDown = atlas.findRegion("btnSmall-down");
+		trStartUp = atlas.findRegion("btnStart-up");
+		trStartDown = atlas.findRegion("btnStart-down");
+		trHelpUp = atlas.findRegion("btnHelp-up");
+		trHelpDown = atlas.findRegion("btnHelp-down");
 	}
 	
 	private void drawTable() {
@@ -88,25 +88,38 @@ public class MenuScreen implements Screen {
 //		btnOptionsStyle.imageDown = new TextureRegionDrawable(trOptionsDown);
 //		Button btnStart = new ImageButton(btnStartStyle);
 //		Button btnOptions = new ImageButton(btnOptionsStyle);
-		ImageButtonStyle btnBigStyle = new ImageButtonStyle();
-		ImageButtonStyle btnSmallStyle = new ImageButtonStyle();
-		btnBigStyle.imageUp = new TextureRegionDrawable(trBigUp);
-		btnBigStyle.imageDown = new TextureRegionDrawable(trBigDown);
-		btnSmallStyle.imageUp = new TextureRegionDrawable(trSmallUp);
-		btnSmallStyle.imageDown = new TextureRegionDrawable(trSmallDown);
+		ImageButtonStyle btnStartStyle = new ImageButtonStyle();
+		ImageButtonStyle btnHelpStyle = new ImageButtonStyle();
+		btnStartStyle.imageUp = new TextureRegionDrawable(trStartUp);
+		btnStartStyle.imageDown = new TextureRegionDrawable(trStartDown);
+		btnHelpStyle.imageUp = new TextureRegionDrawable(trHelpUp);
+		btnHelpStyle.imageDown = new TextureRegionDrawable(trHelpDown);
 		
-		Button btnBig = new ImageButton(btnBigStyle);
-		Button btnSmall = new ImageButton(btnSmallStyle);
+		Button btnStart = new ImageButton(btnStartStyle);
+		Button btnHelp = new ImageButton(btnHelpStyle);
 		
-		btnBig.addListener(new InputListener() {
+		btnStart.addListener(new InputListener() {
 			public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-				Gdx.app.log("QBII", "Touch down BIG button");
+				Gdx.app.log("QBII", "Touch down START button");
 				return true;
 			}
 			
 			public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
-				Gdx.app.log("QBII", "Touch up BIG button");
+				Gdx.app.log("QBII", "Touch up START button");
 				qbii.setScreen(new CrateScreen(qbii));
+				dispose();
+			}
+		});
+		
+		btnHelp.addListener(new InputListener() {
+			public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+				Gdx.app.log("QBII", "Touch down HELP button");
+				return true;
+			}
+			
+			public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
+				Gdx.app.log("QBII", "Touch up HELP button");
+				qbii.setScreen(new HowToScreen(qbii));
 				dispose();
 			}
 		});
@@ -123,10 +136,10 @@ public class MenuScreen implements Screen {
 		table.add(title).padBottom(10);
 		table.row();
 //		table.add(btnStart).padBottom(10);
-		table.add(btnBig).padBottom(10);
+		table.add(btnStart).padBottom(10);
 		table.row();
 //		table.add(btnOptions);
-		table.add(btnSmall);
+		table.add(btnHelp);
 		
 		// add the table to the stage and retrieve its layout
 //		table.layout();

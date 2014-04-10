@@ -130,9 +130,11 @@ public class CrateScreen implements Screen, InputProcessor {
 		btnQuit.addListener(new ChangeListener() {
 			public void changed (ChangeEvent event, Actor actor) {
 				System.out.println("Clicked! Is checked: " + btnQuit.isChecked());
-				btnResume.setVisible(false);
-				btnQuit.setVisible(false);
-				crate.setState(Crate.State.PLAYING);
+//				btnResume.setVisible(false);
+//				btnQuit.setVisible(false);
+//				crate.setState(Crate.State.PLAYING);
+				qbii.setScreen(new MenuScreen(qbii));
+				dispose();
 			}
 		});
 		
@@ -222,7 +224,7 @@ public class CrateScreen implements Screen, InputProcessor {
 
 	@Override
 	public void hide() {
-		Gdx.input.setInputProcessor(null);
+//		Gdx.input.setInputProcessor(null);
 	}
 
 	@Override
@@ -239,7 +241,7 @@ public class CrateScreen implements Screen, InputProcessor {
 
 	@Override
 	public void dispose() {
-		Gdx.input.setInputProcessor(null);
+//		Gdx.input.setInputProcessor(null);
 		inGameHUDStage.dispose();
 		skin.dispose();
 		manager.dispose();
