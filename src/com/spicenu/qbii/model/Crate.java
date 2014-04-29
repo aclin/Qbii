@@ -13,6 +13,7 @@ public class Crate {
 	
 	public static final float WIDTH = 15f;
 	public static final float HEIGHT = 9f;
+	private static final int INIT_LEVEL = 1;
 	
 	/** World Information **/
 	public static int level;
@@ -31,7 +32,7 @@ public class Crate {
 	
 	public Crate() {
 		state = State.PLAYING; 
-		level = 1;
+		level = INIT_LEVEL;
 		popupSpeedUp = new Popup(new Vector2(0, 6));
 		initializeJo();
 	}
@@ -122,7 +123,7 @@ public class Crate {
 			popupSpeedUp.setState(Popup.State.RUNNING);
 		}
 		if (level > 22) {
-			level = 1;
+			level = INIT_LEVEL;
 			jo.resetVelocity();
 		}
 	}

@@ -55,7 +55,7 @@ public class MenuScreen implements Screen {
 		Resolution[] resolutions = {new Resolution(480, 320, "480x320"), new Resolution(960, 640, "960x640")};
 		ResolutionFileResolver resolver = new ResolutionFileResolver(new InternalFileHandleResolver(), resolutions);
 		
-		spriteBatch = qbii.spriteBatch;
+		spriteBatch = new SpriteBatch();
 		
 		manager = new AssetManager();
 		manager.setLoader(TextureAtlas.class, new TextureAtlasLoader(resolver));
@@ -106,7 +106,8 @@ public class MenuScreen implements Screen {
 			
 			public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
 				Gdx.app.log("QBII", "Touch up START button");
-				qbii.setScreen(new CrateScreen(qbii));
+//				qbii.setScreen(new CrateScreen(qbii));
+				qbii.runIntroScreen();
 				dispose();
 			}
 		});

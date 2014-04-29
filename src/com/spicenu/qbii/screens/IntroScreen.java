@@ -1,5 +1,7 @@
 package com.spicenu.qbii.screens;
 
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
@@ -8,30 +10,31 @@ import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.assets.loaders.resolvers.ResolutionFileResolver;
 import com.badlogic.gdx.assets.loaders.resolvers.ResolutionFileResolver.Resolution;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.spicenu.qbii.Qbii;
 
-public class SplashScreen implements Screen {
+public class IntroScreen implements Screen {
 
-	private static final int WIDTH = Gdx.graphics.getWidth();
-	private static final int HEIGHT = Gdx.graphics.getHeight();
 	
 	private Qbii qbii;
 	
 	private AssetManager manager;
-	
-	private BitmapFont font;
+	private Stage stage;
+	private Skin skin;
 	private SpriteBatch spriteBatch;
-	private Texture splashTexture;
-	private TextureRegion splashTextureRegion;
+	private TextureAtlas atlas;
 	
-	private MenuScreen menuScreen;
-	
-	public SplashScreen(Qbii g) {
+	public IntroScreen(Qbii g) {
+		qbii = g;
+		
+		stage = new Stage();
+		skin = new Skin();
+		spriteBatch = new SpriteBatch();
 		
 		Resolution[] resolutions = {new Resolution(480, 320, "480x320"), new Resolution(960, 640, "960x640")};
 		ResolutionFileResolver resolver = new ResolutionFileResolver(new InternalFileHandleResolver(), resolutions);
@@ -40,44 +43,50 @@ public class SplashScreen implements Screen {
 		manager.setLoader(TextureAtlas.class, new TextureAtlasLoader(resolver));
 		
 		manager.load("atlas/textures.atlas", TextureAtlas.class);
-		
-		font = new BitmapFont();
-		qbii = g;
-		spriteBatch = new SpriteBatch();
+		manager.finishLoading();
 	}
 	
 	@Override
 	public void render(float delta) {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		if (manager.update()) {
-//			Gdx.app.log("SplashScreen render()", "Manager updated");
-			
-			spriteBatch.begin();
-//	        spriteBatch.draw(splashTextureRegion, 0, 0);
-	        spriteBatch.draw(manager.get("atlas/textures.atlas", TextureAtlas.class).findRegion("splash"), 0, 0, WIDTH, HEIGHT);
-	        font.draw(spriteBatch, "fps:"+Gdx.graphics.getFramesPerSecond(), 26, 40);
-	        spriteBatch.end();
-	        
-	        if(Gdx.input.justTouched()) {
-	            qbii.setScreen(new MenuScreen(qbii));
-	            dispose();
-	        }
-		}
 		
-        
+		stage.act(delta);
+		stage.draw();
 	}
 
 	@Override
 	public void resize(int width, int height) {
-		// TODO Auto-generated method stub
-
+		System.out.println("resize width: " + width + " height: " + height);
+		stage.getViewport().update(width, height, true);
 	}
 
 	@Override
 	public void show() {
-//		spriteBatch = new SpriteBatch();
-//		TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("atlas/textures.atlas"));
-//		splashTextureRegion = atlas.findRegion("splash");
+		atlas = manager.get("atlas/textures.atlas", TextureAtlas.class);
+		
+		Image[] intro = new Image[16];
+		for (int i = 1; i <= 16; i++) {
+			intro[i - 1] = new Image(new TextureRegion(atlas.findRegion("intro-" + i)));
+		}
+		float delay = 2f;
+		for (int i = 0; i < 15; i++) {
+			intro[i].setPosition(intro[i].getWidth(), 0f);
+			intro[i].addAction(sequence(delay(delay * i),
+										moveTo(0f, 0f)));
+			stage.addActor(intro[i]);
+		}
+		intro[15].setPosition(intro[15].getWidth(), 0f);
+		intro[15].addAction(sequence(delay(delay * 15),
+									moveTo(0f, 0f),
+									delay(2f),
+									run(new Runnable() {
+											public void run() {
+												qbii.runCrateScreen();
+												dispose();
+											}
+										}
+									)));
+		stage.addActor(intro[15]);
 	}
 
 	@Override
@@ -100,11 +109,10 @@ public class SplashScreen implements Screen {
 
 	@Override
 	public void dispose() {
-//		menuScreen.dispose();
 		manager.dispose();
-//		spriteBatch.dispose();
-		font.dispose();
-//		qbii.dispose();
+		stage.dispose();
+		skin.dispose();
+		spriteBatch.dispose();
 	}
 
 }

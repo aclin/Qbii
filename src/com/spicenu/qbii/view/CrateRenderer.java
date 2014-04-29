@@ -77,7 +77,7 @@ public class CrateRenderer {
 		cam.update();
 		
 		font = new BitmapFont();
-		spriteBatch = qbii.spriteBatch;
+		spriteBatch = new SpriteBatch();
 		stateTime = 0f;
 		loadTextures();
 	}
